@@ -17,6 +17,7 @@ import pl.zankowski.iextrading4j.client.IEXTradingApiVersion;
 import pl.zankowski.iextrading4j.client.IEXTradingClient;
 import pl.zankowski.iextrading4j.client.rest.manager.RestRequest;
 import pl.zankowski.iextrading4j.client.rest.request.IEXCloudV1RestRequest;
+import pl.zankowski.iextrading4j.client.rest.request.stocks.PriceRequestBuilder;
 import pl.zankowski.iextrading4j.client.rest.request.stocks.QuoteRequestBuilder;
 
 import javax.ws.rs.client.Client;
@@ -25,6 +26,7 @@ import javax.ws.rs.client.WebTarget;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -53,7 +55,6 @@ public class StockService implements IEXCloudV1RestRequest
     public static void main(String[] args)
     {
         log.info("Fetching stock data... please wait");
-        getStock("nflx");
     }
     
     
@@ -133,17 +134,18 @@ public class StockService implements IEXCloudV1RestRequest
     }
     
     @Override
-    public RestRequest build()
+    public RestRequest<BigDecimal> build()
     {
         final IEXCloudClient cloudClient = IEXTradingClient.create(IEXTradingApiVersion.IEX_CLOUD_BETA_SANDBOX,
                                                                    new IEXCloudTokenBuilder()
                                                                            .withPublishableToken(PUBLISHABLE_STOCK_API_KEY)
                                                                            .withSecretToken(SECRET_STOCK_API_KEY)
                                                                            .build());
-        final Quote quote = cloudClient.executeRequest(new QuoteRequestBuilder()
-                                                               .withSymbol("AAPL")
-                                                               .build());
-        System.out.println(quote);
+        BigDecimal aapl = cloudClient.executeRequest(new PriceRequestBuilder()
+                                                             .withSymbol("nflx")
+                                                             .build());
+        
+        
         return null;
     }
 }

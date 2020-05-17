@@ -24,6 +24,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.transaction.Transactional;
+
 @Slf4j
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -52,7 +54,7 @@ class StockControllerTest
     {
         // Mockito.reset(services);
         // mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        testData = new TestDataInitialization();
+        //testData = new TestDataInitialization();
     }
     
     
@@ -168,16 +170,15 @@ class StockControllerTest
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
     
-    
     @Test
     void sell() throws Exception
     {
         String template = "/sell?companyname=%s&username=%s&units=%d";
         
         //test data
-        String username = "ngomalalibo@yahoo.com";
+        String username = "john.snow@got.com";
         String company = "nflx";
-        int units = 1000;
+        int units = 1;
         
         mockMvc.perform(MockMvcRequestBuilders.post(String.format(template, company, username, units))
                                               .contentType("application/json"))

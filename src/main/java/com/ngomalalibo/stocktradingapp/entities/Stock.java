@@ -24,7 +24,7 @@ public class Stock extends PersistingBaseEntity
     
     @NotNull
     @NumberFormat
-    @JsonProperty("iexRealtimePrice")
+    @JsonProperty("latestPrice")
     private Double unitSharePrice;
     
     public Stock()

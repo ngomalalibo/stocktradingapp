@@ -132,17 +132,7 @@ public class GenericDataService
             // Optional<AggregateIterable<B>> aggregate = Optional.of(collection.aggregate(pipeline));
             Optional<AggregateIterable<B>> aggregate = Optional.of(collection.aggregate(pipeline));
             aggregate.get().iterator().forEachRemaining(searchResult::add);
-            /*aggregate.ifPresentOrElse(d ->
-                                      {
-                                          d.iterator().forEachRemaining(searchResult::add);
-                                      }, () ->
-                                      {
-                                      });*/
-            aggregate.ifPresent(d ->
-                                {
-                                    d.iterator().forEachRemaining(searchResult::add);
-                                });
-            //searchResult.forEach(d -> System.out.println("Id " + ((B) d).getUuid()));
+            
             return searchResult;
         }
         else
@@ -177,6 +167,8 @@ public class GenericDataService
     {
         if (!isCollectionEmpty())
         {
+            log.info("property -> " + property);
+            log.info("value -> " + value);
             if (!Strings.isNullOrEmpty(property) && !Strings.isNullOrEmpty(value))
             {
                 AtomicReference<PersistingBaseEntity> returnB = new AtomicReference<>();

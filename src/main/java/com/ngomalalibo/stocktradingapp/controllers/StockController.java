@@ -39,7 +39,7 @@ public class StockController implements ApplicationContextAware
     }
     
     @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
     {
         this.applicationContext = applicationContext;
     }
@@ -57,6 +57,8 @@ public class StockController implements ApplicationContextAware
             }
             else
             {
+                ApiResponse apiResponse = new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, "User creation failed", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+                // return ResponseEntity.of(Optional.of(apiResponse));
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User creation failed");
             }
         }
@@ -146,7 +148,6 @@ public class StockController implements ApplicationContextAware
                                            @RequestParam("username") String username,
                                            @RequestParam("units") Integer units)
     {
-        
         try
         {
             boolean successful = services.buy(companyname, username, units);
@@ -160,12 +161,7 @@ public class StockController implements ApplicationContextAware
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Purchase failed");
             }
         }
-        catch (CustomNullPointerException e)
-        {
-            ApiResponse apiResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "Purchase failed", e.getMessage());
-            return new ResponseEntity<>(apiResponse, apiResponse.getStatus());
-        }
-        catch (InsufficientCaseException e)
+        catch (CustomNullPointerException | InsufficientCaseException e)
         {
             ApiResponse apiResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "Purchase failed", e.getMessage());
             return new ResponseEntity<>(apiResponse, apiResponse.getStatus());
@@ -211,7 +207,6 @@ public class StockController implements ApplicationContextAware
             {
                 ClientPortfolio portfolio = services.getPortfolio(allClientTransactions, username);
                 return ResponseEntity.ok(portfolio);
-                
             }
             else
             {

@@ -1,10 +1,8 @@
 package com.ngomalalibo.stocktradingapp.services;
 
 import com.google.common.base.Strings;
-import com.ngomalalibo.stocktradingapp.dataService.Connection;
 import com.ngomalalibo.stocktradingapp.dataService.GenericDataService;
 import com.ngomalalibo.stocktradingapp.dataService.StockService;
-import com.ngomalalibo.stocktradingapp.dataproviders.GetObjectByID;
 import com.ngomalalibo.stocktradingapp.dataproviders.SortProperties;
 import com.ngomalalibo.stocktradingapp.entities.*;
 import com.ngomalalibo.stocktradingapp.enums.ActivityLogType;
@@ -58,18 +56,17 @@ public class Services
         {
             throw new NonUniqueResultException("This user exists in the system. Kindly reset your password of choose another username");
         }
-        else
+        User user = new User(username, PasswordEncoder.getPasswordEncoder().encode(password), "ROLE_USER", username);
+        
+        client.setEmail(username);
+        
+        //  confirm registration was successful by retrieving for user and client from database
+        client = (Client) client.save(client);
+        user = (User) user.save(user);
+        
+        if (user != null && client != null)
         {
-            User user = new User(username, PasswordEncoder.getPasswordEncoder().encode(password), "ROLE_USER", client.getUuid());
-            
-            //  confirm registration was successful by querying database for user
-            client = (Client) client.save(client);
-            user = (User) user.save(user);
-            
-            if (user != null && client != null)
-            {
-                return true; // user and client creation confirmed
-            }
+            return true; // user and client creation confirmed
         }
         return false;
     }
@@ -77,43 +74,32 @@ public class Services
     // login to application with spring security providing form-based authentication and authorization
     public boolean login(String username, String password, AuthenticationManager authenticationManager) throws AuthenticationException
     {
-        try
+        User user = (User) userGDS.getRecordByEntityProperty("username", username);
+        
+        // try to authenticate with given credentials, should always return not null or throw an {@link AuthenticationException}
+        log.info("authenticating -> " + username);
+        final Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(username, password)); //
+        // if authentication was successful we will update the security context and redirect to the page requested first
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        
+        if (user != null)
         {
-            User user = (User) userGDS.getRecordByEntityProperty("username", username);
-            
-            // try to authenticate with given credentials, should always return not null or throw an {@link AuthenticationException}
-            log.info("authenticating -> " + username);
-            final Authentication authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(username, password)); //
-            // if authentication was successful we will update the security context and redirect to the page requested first
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            
-            if (user != null)
-            {
-                log.info("user roles -> " + user.getRole());
-            }
-            
-            // log access activity
-            ActivityLog alog = new ActivityLog();
-            alog.setUser(username);
-            alog.setActivityLogType(ActivityLogType.INFO);
-            alog.setEventName("LOGIN");
-            alog.setEventDescription("logged in at "
-                                             + LocalDateTime.now().format(DateTimeFormatter.ofPattern("d MMMM, yyyy 'at' h:mm a")));
-            alog.save(alog); // persist
-            
-            loginStatus = true; // set login status to true
-            
-            return true;
-            
-        }
-        catch (AuthenticationException ex)
-        {
-            log.error("cause " + ex.getCause());
-            log.error("message " + ex.getMessage());
-            return false;
+            log.info("user roles -> " + user.getRole());
         }
         
+        // log access activity
+        ActivityLog alog = new ActivityLog();
+        alog.setUser(username);
+        alog.setActivityLogType(ActivityLogType.INFO);
+        alog.setEventName("LOGIN");
+        alog.setEventDescription("logged in at "
+                                         + LocalDateTime.now().format(DateTimeFormatter.ofPattern("d MMMM, yyyy 'at' h:mm a")));
+        alog.save(alog); // persist
+        
+        loginStatus = true; // set login status to true
+        
+        return true;
     }
     
     
@@ -142,14 +128,11 @@ public class Services
                 clientAccount.setBalance(newBalance);
                 clientAccount.setPreviousBalance(balance);
                 
-                Client returnedClient = (Client) client.save(client);  // persist client account funding
-                
-                // ClientAccount returnedClientAccount = GetObjectByID.getObjectById(returnedClient.getClientAccountID(), Connection.clientAccount);
-                ClientAccount returnedClientAccount = (ClientAccount) clientAccountGDS.getRecordByEntityProperty("clientID", returnedClient.getClientAccountID());
+                ClientAccount returnedClientAccount = clientAccount.replaceEntity(clientAccount, clientAccount);// persist client account funding with update
                 
                 if (returnedClientAccount != null)
                 {
-                    if (returnedClientAccount.getPreviousBalance().equals(clientAccount.getBalance())) // confirm funding was successful
+                    if (returnedClientAccount.getPreviousBalance().equals(balance)) // confirm funding was successful
                     {
                         return true; // previous balance in database record is current balance is user record before update
                     }
@@ -224,63 +207,52 @@ public class Services
             if (clientAccount != null)
             {
                 balance = clientAccount.getBalance();
-            }
-        }
-        Stock stock = getStock(company);
-        if (stock != null)
-        {
-            stockPrice = stock.getUnitSharePrice(); // get current stock price of company equity
-        }
-        
-        cost = stockPrice * units; // cost of current transaction
-        
-        if (userHasUnits) // if user already has units of interested company stock add new stock to old stock
-        {
-            buy.setNoOfUnits(unitsOwned + units);
-        }
-        else
-        {
-            buy.setNoOfUnits(units);
-        }
-        // enssure there is enough funds to execute stock purchase
-        if (balance >= cost)
-        {
-            buy.setTransactionType(TransactionType.BUY); // set type of transaction
-            buy.setStock(new Stock(company, stockPrice)); // store stock purchase detail. price and company
-            buy.setTransactionAmount(cost);
-            buy.setUsername(username); // client making purchase
-            buy.setTransactionStatus(ClientTransactionStatus.BOUGHT);
-            balance -= cost;
-            
-            if (client != null)
-            {
-                buy.save(buy); // persist purchase
                 
-                // ClientAccount clientAccount = GetObjectByID.getObjectById(client.getClientAccountID(), Connection.clientAccount);
-                ClientAccount clientAccount = (ClientAccount) clientAccountGDS.getRecordByEntityProperty("clientID", client.getClientAccountID());
-                if (clientAccount != null)
+                Stock stock = getStock(company); // get company stock
+                if (stock != null)
                 {
+                    stockPrice = stock.getUnitSharePrice(); // get current stock price of company equity
+                }
+                
+                cost = stockPrice * units; // cost of current transaction
+                
+                if (userHasUnits) // if user already has units of interested company stock add new stock to old stock
+                {
+                    buy.setNoOfUnits(unitsOwned + units);
+                }
+                else
+                {
+                    buy.setNoOfUnits(units);
+                }
+                // ensure there is enough funds to execute stock purchase
+                if (balance >= cost)
+                {
+                    buy.setTransactionType(TransactionType.BUY); // set type of transaction
+                    buy.setStock(new Stock(company, stockPrice)); // store stock purchase detail. price and company
+                    buy.setTransactionAmount(cost);
+                    buy.setUsername(username); // client making purchase
+                    buy.setTransactionStatus(ClientTransactionStatus.BOUGHT);
+                    balance -= cost;
+                    
+                    
                     clientAccount.setPreviousBalance(clientAccount.getBalance());
                     clientAccount.setBalance(balance);
-                }
-                
-                Client returned = (Client) client.save(client); // persist client account update after transaction
-                if (returned != null)
-                {
-                    // ClientAccount rca = GetObjectByID.getObjectById(returned.getClientAccountID(), Connection.clientAccount);
-                    ClientAccount rca = (ClientAccount) clientAccountGDS.getRecordByEntityProperty("clientID", returned.getClientAccountID());
-                    if (rca != null && rca.getPreviousBalance().equals(rca.getBalance()))
+                    
+                    ClientAccount returnedClientAccount = clientAccount.replaceEntity(clientAccount, clientAccount);// update balance. replaceEntity takes a records with the same ID and replaces the one in the database one with the other
+                    if (returnedClientAccount != null)
                     {
-                        return true; // persisted
+                        buy.save(buy); // persist new transaction
+                        return true;
                     }
+                }
+                else
+                {
+                    throw new InsufficientCaseException
+                            (new RuntimeException("Not enough funds in your account to make this purchase. Kindly fund your account with " + (cost - balance) + " to proceed with acquisition."));
                 }
             }
         }
-        else
-        {
-            throw new InsufficientCaseException
-                    (new RuntimeException("Not enough funds in your account to make this purchase. Kindly fund your account with " + (cost - balance) + " to proceed with acquiaiton purchase"));
-        }
+        
         
         return false;
     }
@@ -292,7 +264,7 @@ public class Services
         List<ClientTransaction> allUserTransactions = transactionsGDS.getRecordsByEntityKey
                 ("username", username, Collections.singletonList(new SortProperties("username", true)));
         
-        return allUserTransactions.stream().map(trans -> trans.getStock().getSecurityName()).collect(Collectors.toSet()); // collect
+        return allUserTransactions.stream().map(trans -> trans.getStock().getSecurityName()).collect(Collectors.toSet()); // collect a non-duplicate list of clients securities
     }
     
     // sell stock from portfolio
@@ -311,9 +283,9 @@ public class Services
         Integer unitsOwned = 0;
         
         Client client;
-        Double balance = 0D;
-        Double stockPrice;
-        Double profit;
+        double balance = 0D;
+        double stockPrice = 0D;
+        double profit = 0D;
         
         // get all transactions for this client
         List<ClientTransaction> clientTransactions = getAllClientTransactions(username);
@@ -322,7 +294,7 @@ public class Services
         if (clientTransactions.size() > 0)
         {
             // check if user already has units of interested stock
-            userHasUnits = clientTransactions.stream().map(ClientTransaction::getStock).map(Stock::getSecurityName).allMatch(stock -> stock.equalsIgnoreCase(company));
+            userHasUnits = clientTransactions.stream().map(ClientTransaction::getStock).map(Stock::getSecurityName).anyMatch(stockName -> stockName.equalsIgnoreCase(company));
             
             // get amount of units owned by adding all transactions
             unitsOwned = clientTransactions.stream().map(ClientTransaction::getNoOfUnits).reduce(unitsOwned, Integer::sum);
@@ -334,73 +306,68 @@ public class Services
         }
         
         // get user account object
-        User user = GetObjectByID.getObjectById(username, Connection.user);
+        // User user = GetObjectByID.getObjectById(username, Connection.user);
+        User user = (User) userGDS.getRecordByEntityProperty("username", username);  // get object by username
         
         if (user != null)
         {
             // retrieve client details from clientID and store details in map embedded inside user object
             // user.getAdditionalProperties().put("client", GetObjectByID.getObjectById(user.getClientID(), Connection.client));
             user.getAdditionalProperties().put("client", clientGDS.getRecordByEntityProperty("email", user.getClientID()));
+            client = (Client) user.getAdditionalProperties().get("client");
             
-        }
-        
-        client = (Client) user.getAdditionalProperties().get("client");
-        if (client != null)
-        {
-            // ClientAccount ca = GetObjectByID.getObjectById(client.getClientAccountID(), Connection.clientAccount);
-            ClientAccount ca = (ClientAccount) clientAccountGDS.getRecordByEntityProperty("clientID", client.getClientAccountID());
-            if (ca != null)
+            if (client != null)
             {
-                
-                balance = ca.getBalance();
-            }
-        }
-        stockPrice = getStock(company).getUnitSharePrice(); // get current stock price of company equity
-        
-        profit = stockPrice * units; // profit gained from current sell transaction
-        
-        if (userHasUnits) // if user already has units of interested company stock add new stock to old stock
-        {
-            sell.setNoOfUnits(unitsOwned - units);
-        }
-        else
-        {
-            throw new InsufficientCaseException(new RuntimeException("User does not own company equity. Cannot sell"));
-        }
-        
-        sell.setTransactionType(TransactionType.SELL);
-        sell.setStock(new Stock(company, stockPrice));
-        sell.setTransactionAmount(profit);
-        sell.setUsername(username);
-        sell.setTransactionStatus(ClientTransactionStatus.SOLD);
-        
-        balance += profit;
-        
-        
-        if (client != null)
-        {
-            // ClientAccount ca = GetObjectByID.getObjectById(client.getClientAccountID(), Connection.clientAccount);
-            ClientAccount ca = (ClientAccount) clientAccountGDS.getRecordByEntityProperty("clientID", client.getClientAccountID());
-            if (ca != null)
-            {
-                sell.save(sell);
-                ca.setPreviousBalance(ca.getBalance());
-                ca.setBalance(balance);
-                
-                Client returned = (Client) client.save(client);
-                if (returned != null)
+                // ClientAccount ca = GetObjectByID.getObjectById(client.getClientAccountID(), Connection.clientAccount);
+                ClientAccount ca = (ClientAccount) clientAccountGDS.getRecordByEntityProperty("clientID", client.getClientAccountID());
+                if (ca != null)
                 {
-                    // ClientAccount rca = GetObjectByID.getObjectById(returned.getClientAccountID(), Connection.clientAccount);
-                    ClientAccount rca = (ClientAccount) clientAccountGDS.getRecordByEntityProperty("clientID", returned.getClientAccountID());
                     
-                    if (rca != null && rca.getPreviousBalance().equals(rca.getBalance()))
+                    balance = ca.getBalance();
+                    
+                    // get stock price
+                    Stock stock = getStock(company);
+                    
+                    if (stock != null)
                     {
+                        stockPrice = stock.getUnitSharePrice(); // get current stock price of company equity
+                        profit = stockPrice * units; // profit gained from current sell transaction
+                    }
+                    
+                    
+                    if (userHasUnits) // if user already has units of interested company stock add new stock to old stock
+                    {
+                        sell.setNoOfUnits(unitsOwned - units);
+                    }
+                    else
+                    {
+                        throw new InsufficientCaseException(new RuntimeException("User does not own company equity. Cannot sell"));
+                    }
+                    
+                    sell.setTransactionType(TransactionType.SELL);
+                    sell.setStock(new Stock(company, stockPrice));
+                    sell.setTransactionAmount(profit);
+                    sell.setUsername(username);
+                    sell.setTransactionStatus(ClientTransactionStatus.SOLD);
+                    
+                    balance += profit;
+                    
+                    
+                    ca.setPreviousBalance(ca.getBalance());
+                    ca.setBalance(balance);
+                    
+                    // update account balance
+                    ClientAccount returnedClientAccount = ca.replaceEntity(ca, ca);
+                    
+                    // Client returned = (Client) client.save(client); // client collection is not impacted by sell transaction. only transaction and account collections
+                    if (returnedClientAccount != null)
+                    {
+                        // create new transaction
+                        sell.save(sell);
                         return true;
                     }
                 }
-                
             }
-            
         }
         
         return false;
@@ -425,39 +392,51 @@ public class Services
         //total amount invested in buying stocks
         totalAmountInvested = allClientTransactions.stream().filter(trans -> trans.getTransactionType().equals(TransactionType.BUY))
                                                    .map(ClientTransaction::getTransactionAmount).reduce(totalAmountInvested, Double::sum);
+        portfolio.setTotalAmountInvested(totalAmountInvested); // add total amount invested to portfolio
         
         // get all unique client stocks and add to portfolio summary by calling
         portfolio.setStocks(getClientStocks(username));
         
         //get no of units owned per stock, get current stock price. Multiply both value for each stock to get value of portfolio
-        portfolio.getStocks().forEach(stock ->
-                                      {
-                                          Integer noOfUnits = allClientTransactions.stream() // stream all client transactions
-                                                                                   .filter(trans -> stock // get transactions for current stock
-                                                                                                          .equals(trans.getStock().getSecurityName()))
-                                                                                   .map(ClientTransaction::getNoOfUnits).reduce(Integer::sum).orElse(0); // get no of units
-                                          Stock stock1 = getStock(stock);// get current price of stock
-                                          if (stock1 != null)
+        if (portfolio.getStocks() != null)
+        {
+            portfolio.getStocks().forEach(stock ->
                                           {
-                                              Double currentPrice = stock1.getUnitSharePrice();
-                                              totalValueOfPortfolio.updateAndGet(v -> v + noOfUnits * currentPrice); // calculate value of stock and accumulate value of all stocks through each repetition of the foreach loop.
-                                          }
-                                          else
-                                          {
-                                              throw new CustomNullPointerException("Error while calculating polio value. Issue with stock: " + stock);
-                                          }
-                                      });
-        portfolio.setCurrentValueOfPortfolio(totalValueOfPortfolio.get());
+                                              Integer noOfUnits = allClientTransactions.stream() // stream all client transactions
+                                                                                       .filter(trans -> stock.equals(trans.getStock().getSecurityName())) // get transactions for current stock
+                                                                                       .map(ClientTransaction::getNoOfUnits).reduce(Integer::sum).orElse(0); // get no of units
+                                              Stock stock1 = getStock(stock);// get current price of stock
+                                              if (stock1 != null)
+                                              {
+                                                  Double currentPrice = stock1.getUnitSharePrice();
+                                                  // calculate value of stock and accumulate value of all stocks through each repetition of the foreach loop.
+                                                  totalValueOfPortfolio.updateAndGet(accumulatedTotal -> accumulatedTotal + (noOfUnits * currentPrice));
+                                              }
+                                              else
+                                              {
+                                                  throw new CustomNullPointerException("Error while calculating polio value. Issue with stock: " + stock);
+                                              }
+                                          });
+            portfolio.setCurrentValueOfPortfolio(totalValueOfPortfolio.get());
+        }
+        
         
         // get all transactions of type SELL and add them together to get profit from sales
         allClientTransactions.stream().filter(trans -> trans.getTransactionType().equals(TransactionType.SELL)).map(ClientTransaction::getTransactionAmount).reduce(profitFromSales, Double::sum);
+        log.info("profit from sales -> " + profitFromSales);
         portfolio.setProfitFromSales(profitFromSales);
         
-        // get date of first Transaction
-        firstTransactionDate = allClientTransactions.stream().map(PersistingBaseEntity::getCreatedDate).min(Comparator.naturalOrder()).orElse(null);
+        // get date of first Transaction or todays date if unavailable
+        firstTransactionDate = allClientTransactions.stream().map(PersistingBaseEntity::getCreatedDate).min(Comparator.naturalOrder()).orElse(LocalDateTime.now());
         portfolio.setDateOfAcquisition(firstTransactionDate);
         
-        return portfolio;
+        ClientPortfolio savedPortfolio = (ClientPortfolio) portfolio.save(portfolio);// persist portfolio to database
+        
+        if (savedPortfolio != null)
+        {
+            return savedPortfolio;
+        }
+        return null;
     }
     
     
@@ -470,7 +449,13 @@ public class Services
         List<ClientTransaction> periodicListOfClientTrans
                 = allClientTransactions.stream().filter(trans -> trans.getCreatedDate().isAfter(from) && trans.getCreatedDate().isBefore(to)).collect(Collectors.toList());
         
-        return getPortfolio(periodicListOfClientTrans, username);
+        ClientPortfolio portfolio = getPortfolio(periodicListOfClientTrans, username);
+        ClientPortfolio savedPortfolio = (ClientPortfolio) portfolio.save(portfolio);
+        if (savedPortfolio != null)
+        {
+            return savedPortfolio;
+        }
+        return null;
     }
     
     
@@ -485,11 +470,9 @@ public class Services
         {
             throw new CustomNullPointerException("This user does not exist.");
         }
-        // Client client = GetObjectByID.getObjectById(user.getClientID(), Connection.client);
         Client client = (Client) clientGDS.getRecordByEntityProperty("email", user.getClientID());
         if (client != null)
         {
-            // ClientAccount ca = GetObjectByID.getObjectById(client.getClientAccountID(), Connection.clientAccount);
             ClientAccount ca = (ClientAccount) clientAccountGDS.getRecordByEntityProperty("clientID", client.getClientAccountID());
             if (ca != null)
             {

@@ -36,24 +36,23 @@ public class TestDataInitialization
     public TestDataInitialization()
     {
         
-        initData();
+        //initData();
     }
     
     
     public boolean initData()
     {
         /**
-         * Load Test Data
+         * Load Test Data in correct sequence
          * */
-        /*activityLog = initializeActivityLog();
-        client = initializeClient();
+        activityLog = initializeActivityLog();
         clientAccount = initializeClientAccount();
+        client = initializeClient();
         clientTransaction = initializeClientTransaction();
         stock = initializeStock();
         user = initializeUser();
-        clientPortfolio = initializePortfolio();*/
-        
-        // initializeDB(); // persist test data
+        clientPortfolio = initializePortfolio();
+        initializeDB(); // persist test data
         
         return true;
     }
@@ -121,7 +120,9 @@ public class TestDataInitialization
     
     public Client initializeClient()
     {
-        return new Client("John", "Snow", "john.snow@got.com");
+        Client client = new Client("John", "Snow", "john.snow@got.com");
+        client.setClientAccountID(clientAccount.getClientID());
+        return client;
     }
     
     public ActivityLog initializeActivityLog()
