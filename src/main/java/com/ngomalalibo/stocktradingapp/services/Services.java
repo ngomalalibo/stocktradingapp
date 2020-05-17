@@ -412,10 +412,10 @@ public class Services
                                                   // calculate value of stock and accumulate value of all stocks through each repetition of the foreach loop.
                                                   totalValueOfPortfolio.updateAndGet(accumulatedTotal -> accumulatedTotal + (noOfUnits * currentPrice));
                                               }
-                                              else
+                                              /*else
                                               {
                                                   throw new CustomNullPointerException("Error while calculating polio value. Issue with stock: " + stock);
-                                              }
+                                              }*/
                                           });
             portfolio.setCurrentValueOfPortfolio(totalValueOfPortfolio.get());
         }
@@ -429,6 +429,8 @@ public class Services
         // get date of first Transaction or todays date if unavailable
         firstTransactionDate = allClientTransactions.stream().map(PersistingBaseEntity::getCreatedDate).min(Comparator.naturalOrder()).orElse(LocalDateTime.now());
         portfolio.setDateOfAcquisition(firstTransactionDate);
+        portfolio.setUsername(username);
+        portfolio.setEvaluation("To be evaluated");
         
         ClientPortfolio savedPortfolio = (ClientPortfolio) portfolio.save(portfolio);// persist portfolio to database
         

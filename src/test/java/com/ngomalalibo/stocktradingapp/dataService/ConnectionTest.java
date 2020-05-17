@@ -38,7 +38,7 @@ public class ConnectionTest
     @Test
     public void testCreationOfCollections()
     {
-        assertEquals(8, Connection.createAllCollections());
+        assertEquals(7, Connection.createAllCollections());
     }
     
     @Test

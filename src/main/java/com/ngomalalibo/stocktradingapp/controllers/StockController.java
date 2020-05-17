@@ -203,7 +203,7 @@ public class StockController implements ApplicationContextAware
         try
         {
             List<ClientTransaction> allClientTransactions = services.getAllClientTransactions(username);
-            if (allClientTransactions != null)
+            if (allClientTransactions != null && allClientTransactions.size()>0)
             {
                 ClientPortfolio portfolio = services.getPortfolio(allClientTransactions, username);
                 return ResponseEntity.ok(portfolio);

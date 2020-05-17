@@ -24,8 +24,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.transaction.Transactional;
-
 @Slf4j
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -196,8 +194,8 @@ class StockControllerTest
         mockMvc.perform(MockMvcRequestBuilders.post(portfolioURL))
                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                .andExpect(MockMvcResultMatchers.status().isOk())
-               .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)))
-               .andExpect(MockMvcResultMatchers.jsonPath("$[0].username", Matchers.is("john.snow@got.com")));
+               .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.aMapWithSize(16)))
+               .andExpect(MockMvcResultMatchers.jsonPath("$.username", Matchers.is("john.snow@got.com")));
         
     }
     
