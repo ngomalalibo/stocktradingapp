@@ -26,7 +26,6 @@ import javax.persistence.NonUniqueResultException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -116,8 +115,7 @@ public class StockController implements ApplicationContextAware
         model.put("username", userDetails.getUsername());
         model.put("roles", userDetails.getAuthorities()
                                       .stream()
-                                      .map(a -> ((GrantedAuthority) a).getAuthority())
-                                      .collect(Collectors.toList())
+                                      .map(GrantedAuthority::getAuthority)
         );
         return ok(model);
     }
@@ -174,7 +172,7 @@ public class StockController implements ApplicationContextAware
     // @Secured(value = {"USER"})
     // @PostMapping("/stockprice")
     @PostMapping("/stockprice/{companyname}")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    // @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<Object> checkStockPrice(@PathVariable(name = "companyname") String companyname)
     {
         try
@@ -244,7 +242,6 @@ public class StockController implements ApplicationContextAware
             {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Sell transaction failed.");
             }
-            
         }
         catch (InsufficientCaseException e)
         {

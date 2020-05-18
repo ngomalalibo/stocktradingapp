@@ -16,8 +16,6 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import javax.ws.rs.HttpMethod;
-
 
 @Configuration
 @EnableWebSecurity
@@ -50,12 +48,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .and()
                 .authorizeRequests()
                 .antMatchers("/", "/login", "/test", "/register").permitAll()
-                // .antMatchers( "/stockprice/**", "/fundaccount/**", "/buy/**", "/sell/**", "/portfolio/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/fundaccount/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST, "/buy/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST, "/sell/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST, "/portfolio/**").hasRole("USER")
-                .antMatchers(HttpMethod.POST, "/stockprice/**").hasRole("USER")
+                .antMatchers("/stockprice/**", "/fundaccount/**", "/buy/**", "/sell/**", "/portfolio/**").permitAll()
+                // .antMatchers(HttpMethod.POST, "/fundaccount/**").hasRole("ADMIN")
+                // .antMatchers(HttpMethod.POST, "/buy/**").hasRole("ADMIN")
+                // .antMatchers(HttpMethod.POST, "/sell/**").hasRole("ADMIN")
+                // .antMatchers(HttpMethod.POST, "/portfolio/**").hasRole("USER")
+                // .antMatchers(HttpMethod.POST, "/stockprice/**").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
@@ -85,7 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     @Bean
     public DaoAuthenticationProvider authenticationProvider()
     {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        UserAuthenticationProvider provider = new UserAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService());
         provider.setPasswordEncoder(PasswordEncoder.getPasswordEncoder());
         provider.setAuthoritiesMapper(authoritiesMapper());

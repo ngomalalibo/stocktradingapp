@@ -54,7 +54,7 @@ public class UserAuthenticationProvider extends DaoAuthenticationProvider
         {
             Set<SimpleGrantedAuthority> grantedAuthorities = new HashSet<>();
             
-            String[] availableRoles = {"ROLE_USER", "ROLE_ADMIN", "ROLE_SUPER_ADMIN"};
+            String[] availableRoles = {"USER", "ADMIN", "SUPER_ADMIN"};
             // List.of(availableRoles).forEach(d -> grantedAuthorities.add(new SimpleGrantedAuthority(PersonRoleType.getDisplayText(d))));
             for (String role : availableRoles)
             {
