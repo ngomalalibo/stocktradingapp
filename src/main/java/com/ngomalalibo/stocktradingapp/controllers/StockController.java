@@ -1,25 +1,34 @@
 package com.ngomalalibo.stocktradingapp.controllers;
 
-import com.ngomalalibo.stocktradingapp.entities.Client;
-import com.ngomalalibo.stocktradingapp.entities.ClientPortfolio;
-import com.ngomalalibo.stocktradingapp.entities.ClientTransaction;
-import com.ngomalalibo.stocktradingapp.entities.Stock;
+import com.ngomalalibo.stocktradingapp.entities.*;
 import com.ngomalalibo.stocktradingapp.exceptions.ApiResponse;
 import com.ngomalalibo.stocktradingapp.exceptions.CustomNullPointerException;
 import com.ngomalalibo.stocktradingapp.exceptions.InsufficientCaseException;
+import com.ngomalalibo.stocktradingapp.security.JwtTokenProvider;
+import com.ngomalalibo.stocktradingapp.security.UserPrincipal;
 import com.ngomalalibo.stocktradingapp.services.Services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.NonUniqueResultException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 // import org.springframework.security.access.annotation.Secured;
 // import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +38,13 @@ import java.util.List;
 @RestController
 public class StockController implements ApplicationContextAware
 {
+    
+    
+    @Autowired
+    AuthenticationManager authenticationManager;
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
+    
     Services services;
     
     ApplicationContext applicationContext = null;
@@ -45,6 +61,7 @@ public class StockController implements ApplicationContextAware
     }
     
     @PostMapping(value = "/register")
+    // @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<Object> register(@RequestParam("user") String user, @RequestParam("pass") String pass)
     {
         try
@@ -53,7 +70,7 @@ public class StockController implements ApplicationContextAware
             if (successful)
             {
                 ApiResponse apiResponse = new ApiResponse(HttpStatus.OK, "User has been registered successfully", HttpStatus.OK.getReasonPhrase());
-                return ResponseEntity.ok(apiResponse);
+                return ok(apiResponse);
             }
             else
             {
@@ -69,6 +86,43 @@ public class StockController implements ApplicationContextAware
     }
     
     @PostMapping("/login")
+    public ResponseEntity login(@RequestBody User data)
+    {
+        
+        try
+        {
+            String username = data.getUsername();
+            String password = data.getPassword();
+            String role = data.getRole();
+            services.login(username, password, authenticationManager);
+            // authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, data.getPassword()));
+            String token = jwtTokenProvider.createToken(username, data.getRole());
+            Map<Object, Object> model = new HashMap<>();
+            model.put("username", username);
+            model.put("token", token);
+            return ok(model);
+        }
+        catch (AuthenticationException e)
+        {
+            throw new BadCredentialsException("Invalid username/password supplied");
+        }
+    }
+    
+    @GetMapping("/me")
+    // @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity currentUser(@AuthenticationPrincipal UserPrincipal userDetails)
+    {
+        Map<Object, Object> model = new HashMap<>();
+        model.put("username", userDetails.getUsername());
+        model.put("roles", userDetails.getAuthorities()
+                                      .stream()
+                                      .map(a -> ((GrantedAuthority) a).getAuthority())
+                                      .collect(Collectors.toList())
+        );
+        return ok(model);
+    }
+    
+    /*@PostMapping({"/login", "/"})
     public ResponseEntity<Object> login(@RequestParam("user") String user, @RequestParam("pass") String pass, AuthenticationManager authenticationManager)
     {
         try
@@ -89,10 +143,11 @@ public class StockController implements ApplicationContextAware
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User NOT created " + e.getMessage());
         }
         
-    }
+    }*/
     
     // @Secured(value = {"USER"})
     @PostMapping(value = "/fundaccount")
+    // @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<Object> fundAccount(@RequestParam("user") String user, @RequestParam("deposit") Double deposit)
     {
         try
@@ -101,7 +156,7 @@ public class StockController implements ApplicationContextAware
             if (successful)
             {
                 ApiResponse apiResponse = new ApiResponse(HttpStatus.OK, "Account funded successfully", HttpStatus.OK.getReasonPhrase());
-                return ResponseEntity.ok(apiResponse);
+                return ok(apiResponse);
             }
             else
             {
@@ -119,6 +174,7 @@ public class StockController implements ApplicationContextAware
     // @Secured(value = {"USER"})
     // @PostMapping("/stockprice")
     @PostMapping("/stockprice/{companyname}")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<Object> checkStockPrice(@PathVariable(name = "companyname") String companyname)
     {
         try
@@ -126,7 +182,7 @@ public class StockController implements ApplicationContextAware
             Stock stock = services.getStock(companyname);
             if (stock != null)
             {
-                return ResponseEntity.ok(stock);
+                return ok(stock);
             }
             else
             {
@@ -144,6 +200,7 @@ public class StockController implements ApplicationContextAware
     
     // @Secured(value = {"ADMIN"})
     @PostMapping("/buy")
+    // @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> buyStock(@RequestParam("companyname") String companyname,
                                            @RequestParam("username") String username,
                                            @RequestParam("units") Integer units)
@@ -154,7 +211,7 @@ public class StockController implements ApplicationContextAware
             if (successful)
             {
                 ApiResponse apiResponse = new ApiResponse(HttpStatus.OK, "Purchase completed successfully", HttpStatus.OK.getReasonPhrase());
-                return ResponseEntity.ok(apiResponse);
+                return ok(apiResponse);
             }
             else
             {
@@ -170,6 +227,7 @@ public class StockController implements ApplicationContextAware
     
     // @Secured(value = {"USER"})
     @PostMapping("/sell")
+    // @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> sell(@RequestParam("companyname") String companyname,
                                        @RequestParam("username") String username,
                                        @RequestParam("units") Integer units)
@@ -180,7 +238,7 @@ public class StockController implements ApplicationContextAware
             if (successful)
             {
                 ApiResponse apiResponse = new ApiResponse(HttpStatus.OK, "Sale transaction completed successfully", HttpStatus.OK.getReasonPhrase());
-                return ResponseEntity.ok(apiResponse);
+                return ok(apiResponse);
             }
             else
             {
@@ -197,16 +255,17 @@ public class StockController implements ApplicationContextAware
     }
     
     // @Secured(value = {"USER"})
+    // @PreAuthorize("hasAuthority('ROLE_USER')")
     @RequestMapping(value = "/portfolio", method = RequestMethod.POST)
     public ResponseEntity<Object> viewStocks(@RequestParam("username") String username)
     {
         try
         {
             List<ClientTransaction> allClientTransactions = services.getAllClientTransactions(username);
-            if (allClientTransactions != null && allClientTransactions.size()>0)
+            if (allClientTransactions != null && allClientTransactions.size() > 0)
             {
                 ClientPortfolio portfolio = services.getPortfolio(allClientTransactions, username);
-                return ResponseEntity.ok(portfolio);
+                return ok(portfolio);
             }
             else
             {
@@ -222,7 +281,8 @@ public class StockController implements ApplicationContextAware
     
     
     // @Secured(value = {"ADMIN"})
-    @RequestMapping(value = "/test", method = RequestMethod.POST)
+    // @PreAuthorize("hasAuthority('ROLE_USER')")
+    @RequestMapping(value = {"/test", "/"}, method = RequestMethod.POST)
     public ResponseEntity<Object> testing()
     {
         

@@ -71,6 +71,7 @@ public class Services
         return false;
     }
     
+    
     // login to application with spring security providing form-based authentication and authorization
     public boolean login(String username, String password, AuthenticationManager authenticationManager) throws AuthenticationException
     {

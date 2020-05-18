@@ -83,7 +83,7 @@ public class TestDataInitialization
     
     public User initializeUser()
     {
-        return new User("john.snow@got.com", "1234567890", "ROLE_USER", "john.snow@got.com");
+        return new User("john.snow@got.com", "1234567890", "USER", "john.snow@got.com");
     }
     
     public Stock initializeStock()

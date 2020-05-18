@@ -2,14 +2,13 @@ package com.ngomalalibo.stocktradingapp.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ngomalalibo.stocktradingapp.dataService.TestDataInitialization;
+import com.ngomalalibo.stocktradingapp.entities.User;
 import com.ngomalalibo.stocktradingapp.models.StockRequest;
 import com.ngomalalibo.stocktradingapp.services.Services;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -83,8 +82,11 @@ class StockControllerTest
     void login() throws Exception
     {
         String template = "/login?user=%s&pass=%s";
-        String username = "ngomalalibo@yahoo.com";
+        String username = "john.snow@got.com";
         String password = "1234567890";
+        String role = "USER";
+        
+        User user = new User(username, password, role, username);
         
         boolean passResult = true;
         
@@ -100,11 +102,7 @@ class StockControllerTest
             }
         };
         
-        Mockito.when(services.login(username, password, mgr)).thenReturn(true);
-        boolean returnLogin = services.login(username, password, mgr);
-        Assertions.assertTrue(returnLogin);
-        
-        mockMvc.perform(MockMvcRequestBuilders.post(template, username, password)
+        mockMvc.perform(MockMvcRequestBuilders.post(template, username, password).content(objectMapper.writeValueAsString(user))
                                               .contentType("application/json"))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -134,8 +132,6 @@ class StockControllerTest
                                               .contentType(MediaType.APPLICATION_JSON)
                                               .content(objectMapper.writeValueAsString(stockRequest)))
                .andExpect(MockMvcResultMatchers.status().isOk());
-        
-        
     }
     
     @Test

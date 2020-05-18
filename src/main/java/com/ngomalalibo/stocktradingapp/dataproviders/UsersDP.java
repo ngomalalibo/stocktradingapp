@@ -1,29 +1,24 @@
 package com.ngomalalibo.stocktradingapp.dataproviders;
 
-import com.google.common.base.Strings;
-
 import com.ngomalalibo.stocktradingapp.dataService.GenericDataService;
 import com.ngomalalibo.stocktradingapp.entities.User;
-import com.ngomalalibo.stocktradingapp.security.PasswordEncoder;
 import com.ngomalalibo.stocktradingapp.security.UserPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+@Service
 public class UsersDP implements UserDetailsService
 {
-    private final GenericDataService gds = new GenericDataService(new User());
+    private final GenericDataService gds;
     
-    private BCryptPasswordEncoder bcryptPassEncoder = PasswordEncoder.getPasswordEncoder();
+    // private BCryptPasswordEncoder bcryptPassEncoder = PasswordEncoder.getPasswordEncoder();
     
     public UsersDP()
     {
         super();
+        gds = new GenericDataService(new User());
     }
     
     @Override

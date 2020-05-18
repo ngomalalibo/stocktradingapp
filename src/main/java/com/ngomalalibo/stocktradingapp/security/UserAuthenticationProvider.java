@@ -1,5 +1,6 @@
 package com.ngomalalibo.stocktradingapp.security;
 
+import com.google.common.base.Strings;
 import com.ngomalalibo.stocktradingapp.dataService.GenericDataService;
 import com.ngomalalibo.stocktradingapp.dataproviders.UsersDP;
 import com.ngomalalibo.stocktradingapp.entities.User;
@@ -37,13 +38,17 @@ public class UserAuthenticationProvider extends DaoAuthenticationProvider
         // log.info("authenticate -> " + username);
         // log.info("credentials -> " + password);
         
-        if (!(password instanceof String))
+        if (Strings.isNullOrEmpty(password) || Strings.isNullOrEmpty(username))
         {
             throw new BadCredentialsException("Invalid username or password.");
         }
         
-        User usere = (User) gds.getRecordByEntityProperty("userEmail", username);
+        User usere = (User) gds.getRecordByEntityProperty("username", username);
         
+        if (usere == null)
+        {
+            throw new BadCredentialsException("User does not exist");
+        }
         
         if (PasswordEncoder.getPasswordEncoder().matches(password, usere.getPassword()))
         {
