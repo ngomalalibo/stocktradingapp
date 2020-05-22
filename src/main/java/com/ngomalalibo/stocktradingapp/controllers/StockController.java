@@ -32,7 +32,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @Slf4j
 @RestController
-// @RequestMapping("/stocktradingapp")
+@RequestMapping("/")
 public class StockController// implements ApplicationContextAware
 {
     @Autowired
