@@ -30,7 +30,7 @@ public class UserAuthenticationProvider extends DaoAuthenticationProvider
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException
     {
-        log.info("authenticating......");
+        log.info("authenticating......authenticate");
         
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
@@ -54,15 +54,9 @@ public class UserAuthenticationProvider extends DaoAuthenticationProvider
         {
             Set<SimpleGrantedAuthority> grantedAuthorities = new HashSet<>();
             
-            String[] availableRoles = {"USER", "ADMIN", "SUPER_ADMIN"};
+            // String[] availableRoles = {"USER", "ADMIN", "SUPER_ADMIN"};
             // List.of(availableRoles).forEach(d -> grantedAuthorities.add(new SimpleGrantedAuthority(PersonRoleType.getDisplayText(d))));
-            for (String role : availableRoles)
-            {
-                grantedAuthorities.add(new SimpleGrantedAuthority(role));
-            }
-            log.info("authorities -> " + grantedAuthorities.toString());
-            
-            usere.replaceEntity(usere, usere);
+            grantedAuthorities.add(new SimpleGrantedAuthority(usere.getRole()));
             
             return new UsernamePasswordAuthenticationToken(username, password, grantedAuthorities);
         }

@@ -1,6 +1,5 @@
 package com.ngomalalibo.stocktradingapp.services;
 
-import com.ngomalalibo.stocktradingapp.dataService.GenericDataService;
 import com.ngomalalibo.stocktradingapp.dataService.TestDataInitialization;
 import com.ngomalalibo.stocktradingapp.entities.Client;
 import com.ngomalalibo.stocktradingapp.entities.ClientPortfolio;
@@ -31,7 +30,6 @@ import java.util.Set;
 class ServicesTest
 {
     
-    GenericDataService genericDataService;
     TestDataInitialization data;
     
     @Mock
@@ -41,7 +39,6 @@ class ServicesTest
     public void setup()
     {
         MockitoAnnotations.initMocks(this);
-        genericDataService = new GenericDataService(new Stock());
         data = new TestDataInitialization();
     }
     

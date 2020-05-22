@@ -32,6 +32,7 @@ class StockControllerTest
 {
     private RequestPostProcessor requestPostProcessor;
     private RequestPostProcessor requestPostProcessor_approver;
+    
     @Autowired
     private MockMvc mockMvc;
     
@@ -128,7 +129,7 @@ class StockControllerTest
         StockRequest stockRequest = new StockRequest();
         stockRequest.setCompanyname("Netflix");
         
-        mockMvc.perform(MockMvcRequestBuilders.post("/stockprice/{companyname}", "nflx")
+        mockMvc.perform(MockMvcRequestBuilders.get("/stockprice/{companyname}", "nflx")
                                               .contentType(MediaType.APPLICATION_JSON)
                                               .content(objectMapper.writeValueAsString(stockRequest)))
                .andExpect(MockMvcResultMatchers.status().isOk());
@@ -142,7 +143,7 @@ class StockControllerTest
         // Stock stock = new Stock(companyName, 500D);
         //
         String template = "/stockprice/{companyname}";
-        mockMvc.perform(MockMvcRequestBuilders.post(template, "nflx"))
+        mockMvc.perform(MockMvcRequestBuilders.get(template, "nflx"))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
     
@@ -199,7 +200,7 @@ class StockControllerTest
     void testingTemplate() throws Exception
     {
         String template = "/test";
-        mockMvc.perform(MockMvcRequestBuilders.post("/test")
+        mockMvc.perform(MockMvcRequestBuilders.get("/test")
                                               .contentType("application/json"))
                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_VALUE))
                .andExpect(MockMvcResultMatchers.status().isOk());

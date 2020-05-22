@@ -29,3 +29,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+effective-pom.xml
+class_dg.eddx
+class_dg.pdf
+
+DB_URI.txt

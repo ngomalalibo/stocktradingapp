@@ -8,13 +8,10 @@ import com.ngomalalibo.stocktradingapp.security.JwtTokenProvider;
 import com.ngomalalibo.stocktradingapp.security.UserPrincipal;
 import com.ngomalalibo.stocktradingapp.services.Services;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -35,12 +32,12 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @Slf4j
 @RestController
-public class StockController implements ApplicationContextAware
+// @RequestMapping("/stocktradingapp")
+public class StockController// implements ApplicationContextAware
 {
-    
-    
     @Autowired
     AuthenticationManager authenticationManager;
+    
     @Autowired
     JwtTokenProvider jwtTokenProvider;
     
@@ -53,11 +50,11 @@ public class StockController implements ApplicationContextAware
         this.services = services;
     }
     
-    @Override
+    /*@Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
     {
         this.applicationContext = applicationContext;
-    }
+    }*/
     
     @PostMapping(value = "/register")
     // @PreAuthorize("hasRole('ROLE_USER')")
@@ -85,9 +82,8 @@ public class StockController implements ApplicationContextAware
     }
     
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody User data)
+    public ResponseEntity<Object> login(@RequestBody User data)
     {
-        
         try
         {
             String username = data.getUsername();
@@ -111,13 +107,18 @@ public class StockController implements ApplicationContextAware
     // @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity currentUser(@AuthenticationPrincipal UserPrincipal userDetails)
     {
-        Map<Object, Object> model = new HashMap<>();
-        model.put("username", userDetails.getUsername());
-        model.put("roles", userDetails.getAuthorities()
-                                      .stream()
-                                      .map(GrantedAuthority::getAuthority)
-        );
-        return ok(model);
+        if (userDetails != null)
+        {
+            Map<Object, Object> model = new HashMap<>();
+            model.put("username", userDetails.getUsername());
+            model.put("roles", userDetails.getAuthorities()
+                                          .stream()
+                                          .map(GrantedAuthority::getAuthority));
+            return ok(model);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user principal");
+        
+        
     }
     
     /*@PostMapping({"/login", "/"})
@@ -171,7 +172,7 @@ public class StockController implements ApplicationContextAware
     
     // @Secured(value = {"USER"})
     // @PostMapping("/stockprice")
-    @PostMapping("/stockprice/{companyname}")
+    @GetMapping("/stockprice/{companyname}")
     // @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<Object> checkStockPrice(@PathVariable(name = "companyname") String companyname)
     {
@@ -279,7 +280,7 @@ public class StockController implements ApplicationContextAware
     
     // @Secured(value = {"ADMIN"})
     // @PreAuthorize("hasAuthority('ROLE_USER')")
-    @RequestMapping(value = {"/test", "/"}, method = RequestMethod.POST)
+    @GetMapping(value = {"/test", "/"})
     public ResponseEntity<Object> testing()
     {
         

@@ -78,7 +78,7 @@ public class Services
         User user = (User) userGDS.getRecordByEntityProperty("username", username);
         
         // try to authenticate with given credentials, should always return not null or throw an {@link AuthenticationException}
-        log.info("authenticating -> " + username);
+        log.info("authenticating -> login " + username);
         final Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(username, password)); //
         // if authentication was successful we will update the security context and redirect to the page requested first
@@ -99,6 +99,8 @@ public class Services
         alog.save(alog); // persist
         
         loginStatus = true; // set login status to true
+        
+        log.info("Logged in successfully.......");
         
         return true;
     }

@@ -47,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/login", "/test", "/register").permitAll()
+                .antMatchers("/", "/stocktradingapp/**", "/login", "/test", "/register", "/me").permitAll()
                 .antMatchers("/stockprice/**", "/fundaccount/**", "/buy/**", "/sell/**", "/portfolio/**").permitAll()
                 // .antMatchers(HttpMethod.POST, "/fundaccount/**").hasRole("ADMIN")
                 // .antMatchers(HttpMethod.POST, "/buy/**").hasRole("ADMIN")
