@@ -330,4 +330,22 @@
             </plugin>
         </plugins>
     </build>
+<profiles>
+    <profile>
+        <id>production</id>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>com.heroku.sdk</groupId>
+                    <artifactId>heroku-maven-plugin</artifactId>
+                    <configuration>
+                        <appName>stockportfoliomgr</appName>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+</profiles>
+
+
 </project>
