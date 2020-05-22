@@ -1,4 +1,5 @@
 #stocktradingapp
+
 The Java application has been built using the Spring framework. The backend is a NoSQL MongoDB database hosted remotely on Atlas.
 
 The application retrieves current stock price information from the IEX Cloud service API and uses that information to manage client portfolios in real-time. Clients can fund their accounts, buy & sell securities and view their portfolio details for a selected time period.

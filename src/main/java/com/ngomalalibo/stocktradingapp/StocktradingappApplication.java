@@ -2,18 +2,17 @@ package com.ngomalalibo.stocktradingapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class StocktradingappApplication extends SpringBootServletInitializer
+public class StocktradingappApplication// extends SpringBootServletInitializer
 {
-    @Override
+    /*@Override
     protected SpringApplicationBuilder configure(
             SpringApplicationBuilder builder)
     {
         return builder.sources(StocktradingappApplication.class);
-    }
+    }*/
+    
     public static void main(String[] args)
     {
         SpringApplication.run(StocktradingappApplication.class, args);
@@ -25,6 +24,4 @@ public class StocktradingappApplication extends SpringBootServletInitializer
                 StocktradingappApplication.class);
         sa.run(args);
     }*/
-    
-    
 }
