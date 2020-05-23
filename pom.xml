@@ -252,24 +252,24 @@
                 </executions>
             </plugin>-->
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>war</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <!--                    <webappDirectory>${project.build.directory}</webappDirectory>-->
-                    <warName>${project.artifactId}</warName>
-                    <outputDirectory>${project.build.directory}</outputDirectory>
-                </configuration>
-            </plugin>
+            <!-- <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-war-plugin</artifactId>
+                 <executions>
+                     <execution>
+                         <phase>package</phase>
+                         <goals>
+                             <goal>war</goal>
+                         </goals>
+                     </execution>
+                 </executions>
+                 <configuration>
+                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                     &lt;!&ndash;                    <webappDirectory>${project.build.directory}</webappDirectory>&ndash;&gt;
+                     <warName>${project.artifactId}</warName>
+                     <outputDirectory>${project.build.directory}</outputDirectory>
+                 </configuration>
+             </plugin>-->
 
             <plugin>
                 <groupId>com.heroku.sdk</groupId>
