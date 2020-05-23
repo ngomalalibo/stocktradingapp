@@ -27,6 +27,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
+        <!--<dependency>
+           <groupId>org.mongodb</groupId>
+           <artifactId>mongo-java-driver</artifactId>
+           <version>3.12.0</version>
+       </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jersey</artifactId>
@@ -96,7 +101,7 @@
             <artifactId>bson</artifactId>
             <version>3.11.0</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver</artifactId>
             <version>3.11.0</version>
@@ -111,7 +116,7 @@
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-core</artifactId>
             <version>3.11.0</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
