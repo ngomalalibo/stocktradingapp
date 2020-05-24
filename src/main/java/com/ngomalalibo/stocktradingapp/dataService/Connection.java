@@ -13,11 +13,13 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.glassfish.jersey.internal.guava.Iterators;
+import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
 @Slf4j
+@Repository
 public class Connection<T extends PersistingBaseEntity>
 {
     public static final String DBNAME = "stocks";
