@@ -34,8 +34,8 @@ public class Connection<T extends PersistingBaseEntity>
     
     
     // @Value("${spring.data.mongodb.uri}")
-    // public static String DBSTR = System.getenv().get("MONGODB_DATABASE_STOCKS_ATLAS");
-    public static String DBSTR = "mongodb+srv://stocks:stocks@mflix-lfo1z.mongodb.net/test?retryWrites=true&w=majority";
+    public static String DBSTR = System.getenv().get("MONGODB_DATABASE_STOCKS_ATLAS");
+    // public static String DBSTR = "mongodb+srv://stocks:stocks@mflix-lfo1z.mongodb.net/test?retryWrites=true&w=majority";
     
     
     private static MongoClient mongo = null;

@@ -23,15 +23,6 @@
     </properties>
 
     <dependencies>
-        <!--<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>-->
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>3.12.0</version>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jersey</artifactId>
@@ -101,10 +92,10 @@
             <artifactId>bson</artifactId>
             <version>3.11.0</version>
         </dependency>
-        <!--<dependency>
+        <dependency>
             <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver</artifactId>
-            <version>3.11.0</version>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.12.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.mongodb</groupId>
@@ -112,11 +103,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver-core</artifactId>
-            <version>3.11.0</version>
-        </dependency>-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -232,25 +218,6 @@
                     <maxAttempts>240</maxAttempts>
                 </configuration>
             </plugin>
-            <!--<plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>build-info</goal>
-                        </goals>
-                        <configuration>
-                            <additionalProperties>
-                                <encoding.source>${project.build.sourceEncoding}</encoding.source>
-                                <encoding.reporting>${project.reporting.outputEncoding}</encoding.reporting>
-                                <java.source>${maven.compiler.source}</java.source>
-                                <java.target>${maven.compiler.target}</java.target>
-                            </additionalProperties>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -265,33 +232,10 @@
                 </executions>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <!--                    <webappDirectory>${project.build.directory}</webappDirectory>-->
                     <warName>${project.artifactId}</warName>
                     <outputDirectory>${project.build.directory}</outputDirectory>
                 </configuration>
             </plugin>
-
-            <!--<plugin>
-                <groupId>com.heroku.sdk</groupId>
-                <artifactId>heroku-maven-plugin</artifactId>
-                <version>3.0.1</version>
-                <configuration>
-                    <appName>stockportfoliomgr</appName>
-                    <buildpacks>
-                        <buildpack>heroku/java</buildpack>
-                    </buildpacks>
-                    <processTypes>
-                        <web>
-                            &lt;!&ndash;java $JAVA_OPTS -jar target/dependency/webapp-runner.jar
-                            target/web-librarian-project-2.0-SNAPSHOT.war&ndash;&gt;
-                            java $JAVA_OPTS -jar target/webapp-runner.jar &#45;&#45;port $PORT
-                            target/stocktradingapp.war
-                        </web>
-                    </processTypes>
-                </configuration>
-            </plugin>-->
-
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
