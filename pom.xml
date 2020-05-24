@@ -28,10 +28,10 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>-->
         <dependency>
-           <groupId>org.mongodb</groupId>
-           <artifactId>mongo-java-driver</artifactId>
-           <version>3.12.0</version>
-       </dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.12.0</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jersey</artifactId>
@@ -252,26 +252,26 @@
                 </executions>
             </plugin>-->
 
-            <!-- <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-war-plugin</artifactId>
-                 <executions>
-                     <execution>
-                         <phase>package</phase>
-                         <goals>
-                             <goal>war</goal>
-                         </goals>
-                     </execution>
-                 </executions>
-                 <configuration>
-                     <failOnMissingWebXml>false</failOnMissingWebXml>
-                     &lt;!&ndash;                    <webappDirectory>${project.build.directory}</webappDirectory>&ndash;&gt;
-                     <warName>${project.artifactId}</warName>
-                     <outputDirectory>${project.build.directory}</outputDirectory>
-                 </configuration>
-             </plugin>-->
-
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <!--                    <webappDirectory>${project.build.directory}</webappDirectory>-->
+                    <warName>${project.artifactId}</warName>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                </configuration>
+            </plugin>
+
+            <!--<plugin>
                 <groupId>com.heroku.sdk</groupId>
                 <artifactId>heroku-maven-plugin</artifactId>
                 <version>3.0.1</version>
@@ -282,14 +282,14 @@
                     </buildpacks>
                     <processTypes>
                         <web>
-                            <!--java $JAVA_OPTS -jar target/dependency/webapp-runner.jar
-                            target/web-librarian-project-2.0-SNAPSHOT.war-->
-                            java $JAVA_OPTS -jar target/webapp-runner.jar --port $PORT
+                            &lt;!&ndash;java $JAVA_OPTS -jar target/dependency/webapp-runner.jar
+                            target/web-librarian-project-2.0-SNAPSHOT.war&ndash;&gt;
+                            java $JAVA_OPTS -jar target/webapp-runner.jar &#45;&#45;port $PORT
                             target/stocktradingapp.war
                         </web>
                     </processTypes>
                 </configuration>
-            </plugin>
+            </plugin>-->
 
 
             <plugin>
