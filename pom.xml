@@ -204,20 +204,18 @@
     </dependencyManagement>
 
     <build>
-        <defaultGoal>spring-boot:run</defaultGoal>
+        <!--        <defaultGoal>spring-boot:run</defaultGoal>-->
         <finalName>${project.artifactId}</finalName>
         <plugins>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <!-- Clean build and startup time for Vaadin apps sometimes may exceed
-                     the default Spring Boot's 30sec timeout.  -->
                 <configuration>
                     <mainClass>com.ngomalalibo.stocktradingapp.StocktradingappApplication</mainClass>
                     <wait>500</wait>
                     <maxAttempts>240</maxAttempts>
                 </configuration>
-            </plugin>
+            </plugin>-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -291,22 +289,4 @@
             </plugin>
         </plugins>
     </build>
-    <profiles>
-        <profile>
-            <id>production</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.heroku.sdk</groupId>
-                        <artifactId>heroku-maven-plugin</artifactId>
-                        <configuration>
-                            <appName>stockportfoliomgr</appName>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
-
 </project>
