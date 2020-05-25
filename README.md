@@ -1,4 +1,14 @@
 #stocktradingapp
+URLs (accept json): 
+https://stockportfoliomgr.herokuapp.com/
+https://stockportfoliomgr.herokuapp.com/fundaccount (params: companyname & amount)
+https://stockportfoliomgr.herokuapp.com/buy (params: companyname, username & units)
+https://stockportfoliomgr.herokuapp.com/sell (params: companyname, username & units)
+https://stockportfoliomgr.herokuapp.com/portfolio (param: username)
+https://stockportfoliomgr.herokuapp.com/stockprice/{companyname} eg. nflx for Netflix
+https://stockportfoliomgr.herokuapp.com/login (params: username & token)
+https://stockportfoliomgr.herokuapp.com/register (params: user & pass)
+https://stockportfoliomgr.herokuapp.com/test
 
 The Java application has been built using the Spring framework. The backend is a NoSQL MongoDB database hosted remotely on Atlas.
 
@@ -9,7 +19,6 @@ Ten (10) Unit tests for the Database services (ServicesTest.java)
 Nine (13) Integration tests for the database services in (StockController.java and ConnectionTest.java).
 
 The details of the implementation are as follows:
-
 Domain Models (Entities) and the data points are below: 
 1.PersistingBaseEntity (Base Model)
 * activityLog
@@ -79,8 +88,6 @@ Domain Models (Entities) and the data points are below:
 * password
 * role
 * username
-
-
 It has the main controller as StockController.java in the controllers package with all the endpoints implemented.
 All the database services are in Services.java in the dataservice package. 
 The uploaded diagram helps to visualize the software system. It is in root of the project folder.
