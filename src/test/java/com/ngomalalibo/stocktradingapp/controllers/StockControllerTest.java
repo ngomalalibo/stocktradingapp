@@ -23,6 +23,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.HashMap;
+
 @Slf4j
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -111,15 +113,20 @@ class StockControllerTest
     @Test
     void fundAccount() throws Exception
     {
-        String template = "/fundaccount?user=%s&deposit=%f";
+        String template = "/fundaccount";
         String username = "john.snow@got.com";
         double deposit = 50000;
         
-        fundaccountURL = String.format(template, username, deposit);
+        HashMap<String, Object> request = new HashMap<String, Object>()
+        {{
+            put("user", username);
+            put("deposit", deposit);
+        }};
+        fundaccountURL = template;
         log.info("fundaccountURL -> " + fundaccountURL);
         
         mockMvc.perform(MockMvcRequestBuilders.post(fundaccountURL)
-                                              .contentType("application/json"))
+                                              .contentType("application/json").content(objectMapper.writeValueAsString(request)))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
     
@@ -150,33 +157,47 @@ class StockControllerTest
     @Test
     void buyStock() throws Exception
     {
-        String template = "/buy?companyname=%s&username=%s&units=%d";
+        String template = "/buy";
         String company = "nflx";
         String username = "john.snow@got.com";
         int units = 2;
+        HashMap<String, Object> request = new HashMap<String, Object>()
+        {{
+            put("companyname", company);
+            put("username", username);
+            put("units", units);
+        }};
+        
         
         boolean result = true;
         
-        buyURL = String.format(template, company, username, units);
+        buyURL = template;
         log.info("buyURL -> " + buyURL);
         
         mockMvc.perform(MockMvcRequestBuilders.post(buyURL)
-                                              .contentType("application/json"))
+                                              .contentType("application/json").content(objectMapper.writeValueAsString(request)))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
     
     @Test
     void sell() throws Exception
     {
-        String template = "/sell?companyname=%s&username=%s&units=%d";
-        
         //test data
-        String username = "john.snow@got.com";
+        String template = "/sell";
         String company = "nflx";
+        String username = "john.snow@got.com";
         int units = 1;
+        HashMap<String, Object> request = new HashMap<String, Object>()
+        {{
+            put("companyname", company);
+            put("username", username);
+            put("units", units);
+        }};
         
-        mockMvc.perform(MockMvcRequestBuilders.post(String.format(template, company, username, units))
-                                              .contentType("application/json"))
+        sellURL = template;
+        
+        mockMvc.perform(MockMvcRequestBuilders.post(sellURL)
+                                              .contentType("application/json").content(objectMapper.writeValueAsString(request)))
                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -184,11 +205,15 @@ class StockControllerTest
     @Test
     void viewStocks_returnsClientPortfolio() throws Exception
     {
-        String template = "/portfolio?username=%s";
+        String template = "/portfolio";
         String username = "john.snow@got.com";
-        portfolioURL = String.format(template, username);
+        HashMap<String, Object> request = new HashMap<String, Object>()
+        {{
+            put("username", username);
+        }};
+        portfolioURL = template;
         log.info("portfolioURL -> " + portfolioURL);
-        mockMvc.perform(MockMvcRequestBuilders.post(portfolioURL))
+        mockMvc.perform(MockMvcRequestBuilders.post(portfolioURL).contentType("application/json").content(objectMapper.writeValueAsString(request)))
                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                .andExpect(MockMvcResultMatchers.status().isOk())
                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.aMapWithSize(16)))

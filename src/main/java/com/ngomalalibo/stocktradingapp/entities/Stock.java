@@ -1,7 +1,6 @@
 package com.ngomalalibo.stocktradingapp.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
@@ -9,9 +8,10 @@ import org.springframework.format.annotation.NumberFormat;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
-import java.util.Map;
 
-
+@JsonPropertyOrder({"companyName"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
+// @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class Stock extends PersistingBaseEntity
@@ -52,6 +52,18 @@ public class Stock extends PersistingBaseEntity
     public Integer iexAskSize;*/
     
     @BsonIgnore
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    // @JsonIgnore
+    private HashMap<String, Object> additionalProperties = new HashMap<String, Object>();
+    
+    @JsonAnyGetter
+    public HashMap<String, Object> getAdditionalProperties()
+    {
+        return additionalProperties;
+    }
+    
+    @JsonAnySetter
+    public void setAdditionalProperties(String key, Object value)
+    {
+        additionalProperties.put(key, value);
+    }
 }

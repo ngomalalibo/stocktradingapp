@@ -52,11 +52,6 @@ public class StockService implements IEXCloudV1RestRequest
         target = client.target(URL_ADD_COMPANY_TOKEN);
     }
     
-    public static void main(String[] args)
-    {
-        log.info("Fetching stock data... please wait");
-    }
-    
     
     public static Stock getStock(String company)
     {
@@ -121,13 +116,13 @@ public class StockService implements IEXCloudV1RestRequest
     
     public static Quote getQuote()
     {
-        final IEXCloudClient cloudClient = IEXTradingClient.create(IEXTradingApiVersion.IEX_CLOUD_BETA_SANDBOX,
+        final IEXCloudClient cloudClient = IEXTradingClient.create(IEXTradingApiVersion.IEX_CLOUD_V1/*IEX_CLOUD_BETA_SANDBOX*/,
                                                                    new IEXCloudTokenBuilder()
                                                                            .withPublishableToken(PUBLISHABLE_STOCK_API_KEY)
                                                                            .withSecretToken(SECRET_STOCK_API_KEY)
                                                                            .build());
         final Quote quote = cloudClient.executeRequest(new QuoteRequestBuilder()
-                                                               .withSymbol("AAPL")
+                                                               .withSymbol("NFLX")
                                                                .build());
         System.out.println(quote);
         return quote;
@@ -136,16 +131,24 @@ public class StockService implements IEXCloudV1RestRequest
     @Override
     public RestRequest<BigDecimal> build()
     {
-        final IEXCloudClient cloudClient = IEXTradingClient.create(IEXTradingApiVersion.IEX_CLOUD_BETA_SANDBOX,
+        log.info("Fetching stock price... please wait");
+        final IEXCloudClient cloudClient = IEXTradingClient.create(IEXTradingApiVersion.IEX_CLOUD_V1,
                                                                    new IEXCloudTokenBuilder()
                                                                            .withPublishableToken(PUBLISHABLE_STOCK_API_KEY)
                                                                            .withSecretToken(SECRET_STOCK_API_KEY)
                                                                            .build());
-        BigDecimal aapl = cloudClient.executeRequest(new PriceRequestBuilder()
+        BigDecimal nflx = cloudClient.executeRequest(new PriceRequestBuilder()
                                                              .withSymbol("nflx")
                                                              .build());
         
         
         return null;
+    }
+    
+    public static void main(String[] args)
+    {
+        log.info("Fetching stock data... please wait");
+        
+        System.out.println(StockService.getQuote().toString());
     }
 }

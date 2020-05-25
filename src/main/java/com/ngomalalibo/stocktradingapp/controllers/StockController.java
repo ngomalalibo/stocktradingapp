@@ -32,7 +32,6 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @Slf4j
 @RestController
-@RequestMapping("/")
 public class StockController// implements ApplicationContextAware
 {
     @Autowired
@@ -58,11 +57,12 @@ public class StockController// implements ApplicationContextAware
     
     @PostMapping(value = "/register")
     // @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<Object> register(@RequestParam("user") String user, @RequestParam("pass") String pass)
+    // public ResponseEntity<Object> register(@RequestParam("user") String user, @RequestParam("pass") String pass)
+    public ResponseEntity<Object> register(@RequestBody HashMap<String, Object> request)
     {
         try
         {
-            boolean successful = services.register(user, pass, new Client());
+            boolean successful = services.register(request.get("user").toString(), request.get("pass").toString(), new Client());
             if (successful)
             {
                 ApiResponse apiResponse = new ApiResponse(HttpStatus.OK, "User has been registered successfully", HttpStatus.OK.getReasonPhrase());
@@ -145,13 +145,14 @@ public class StockController// implements ApplicationContextAware
     }*/
     
     // @Secured(value = {"USER"})
-    @PostMapping(value = "/fundaccount")
+    @PostMapping(value = "/fundaccount", consumes = "application/json")
     // @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<Object> fundAccount(@RequestParam("user") String user, @RequestParam("deposit") Double deposit)
+    // public ResponseEntity<Object> fundAccount(@RequestParam("user") String user, @RequestParam("deposit") Double deposit)
+    public ResponseEntity<Object> fundAccount(@RequestBody HashMap<String, Object> request)
     {
         try
         {
-            boolean successful = services.fundAccount(user, deposit);
+            boolean successful = services.fundAccount(request.get("user").toString(), Double.parseDouble(request.get("deposit").toString()));
             if (successful)
             {
                 ApiResponse apiResponse = new ApiResponse(HttpStatus.OK, "Account funded successfully", HttpStatus.OK.getReasonPhrase());
@@ -198,15 +199,16 @@ public class StockController// implements ApplicationContextAware
     
     
     // @Secured(value = {"ADMIN"})
-    @PostMapping("/buy")
     // @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Object> buyStock(@RequestParam("companyname") String companyname,
-                                           @RequestParam("username") String username,
-                                           @RequestParam("units") Integer units)
+    // @RequestMapping(value = "/buy", consumes = "application/json", produces = "application/json", method = RequestMethod.POST, params = {"companyname", "username", "units"})
+    @PostMapping("/buy")
+    @ResponseBody
+    // public ResponseEntity<Object> buyStock(@RequestParam("companyname") String companyname, @RequestParam("username") String username, @RequestParam("units") Integer units)
+    public ResponseEntity<Object> buyStock(@RequestBody HashMap<String, Object> request)
     {
         try
         {
-            boolean successful = services.buy(companyname, username, units);
+            boolean successful = services.buy(request.get("companyname").toString(), request.get("username").toString(), Integer.parseInt(request.get("units").toString()));
             if (successful)
             {
                 ApiResponse apiResponse = new ApiResponse(HttpStatus.OK, "Purchase completed successfully", HttpStatus.OK.getReasonPhrase());
@@ -227,13 +229,11 @@ public class StockController// implements ApplicationContextAware
     // @Secured(value = {"USER"})
     @PostMapping("/sell")
     // @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Object> sell(@RequestParam("companyname") String companyname,
-                                       @RequestParam("username") String username,
-                                       @RequestParam("units") Integer units)
+    public ResponseEntity<Object> sell(@RequestBody HashMap<String, Object> request)
     {
         try
         {
-            boolean successful = services.sell(companyname, username, units);
+            boolean successful = services.sell(request.get("companyname").toString(), request.get("username").toString(), Integer.parseInt(request.get("units").toString()));
             if (successful)
             {
                 ApiResponse apiResponse = new ApiResponse(HttpStatus.OK, "Sale transaction completed successfully", HttpStatus.OK.getReasonPhrase());
@@ -255,14 +255,14 @@ public class StockController// implements ApplicationContextAware
     // @Secured(value = {"USER"})
     // @PreAuthorize("hasAuthority('ROLE_USER')")
     @RequestMapping(value = "/portfolio", method = RequestMethod.POST)
-    public ResponseEntity<Object> viewStocks(@RequestParam("username") String username)
+    public ResponseEntity<Object> viewStocks(@RequestBody HashMap<String, Object> request)
     {
         try
         {
-            List<ClientTransaction> allClientTransactions = services.getAllClientTransactions(username);
+            List<ClientTransaction> allClientTransactions = services.getAllClientTransactions(request.get("username").toString());
             if (allClientTransactions != null && allClientTransactions.size() > 0)
             {
-                ClientPortfolio portfolio = services.getPortfolio(allClientTransactions, username);
+                ClientPortfolio portfolio = services.getPortfolio(allClientTransactions, request.get("username").toString());
                 return ok(portfolio);
             }
             else
