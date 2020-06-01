@@ -1,6 +1,6 @@
 package com.ngomalalibo.stocktradingapp.security;
 
-import com.ngomalalibo.stocktradingapp.dataproviders.UsersDP;
+import com.ngomalalibo.stocktradingapp.dataprovider.UsersDP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,13 +47,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/stocktradingapp/**", "/login", "/test", "/register", "/me").permitAll()
-                .antMatchers("/stockprice/**", "/fundaccount/**", "/buy/**", "/sell/**", "/portfolio/**").permitAll()
-                // .antMatchers(HttpMethod.POST, "/fundaccount/**").hasRole("ADMIN")
-                // .antMatchers(HttpMethod.POST, "/buy/**").hasRole("ADMIN")
-                // .antMatchers(HttpMethod.POST, "/sell/**").hasRole("ADMIN")
-                // .antMatchers(HttpMethod.POST, "/portfolio/**").hasRole("USER")
-                // .antMatchers(HttpMethod.POST, "/stockprice/**").hasRole("USER")
+                .antMatchers("/", "/stocktradingapp/**", "/test", "/registration", "/me").permitAll()
+//                .antMatchers(/*"/stockprice/**",*/  "/transatcion/**", "/portfolio/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));

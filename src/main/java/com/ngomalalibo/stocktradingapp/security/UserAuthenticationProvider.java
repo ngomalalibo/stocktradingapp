@@ -1,9 +1,9 @@
 package com.ngomalalibo.stocktradingapp.security;
 
 import com.google.common.base.Strings;
-import com.ngomalalibo.stocktradingapp.dataService.GenericDataService;
-import com.ngomalalibo.stocktradingapp.dataproviders.UsersDP;
-import com.ngomalalibo.stocktradingapp.entities.User;
+import com.ngomalalibo.stocktradingapp.repository.GenericDataService;
+import com.ngomalalibo.stocktradingapp.dataprovider.UsersDP;
+import com.ngomalalibo.stocktradingapp.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

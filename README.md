@@ -12,7 +12,7 @@ https://stockportfoliomgr.herokuapp.com/test
 
 The Java application has been built using the Spring framework. The backend is a NoSQL MongoDB database hosted remotely on Atlas.
 
-The application retrieves current stock price information from the IEX Cloud service API and uses that information to manage client portfolios in real-time. Clients can fund their accounts, buy & sell securities and view their portfolio details for a selected time period.
+The application retrieves current stockQuote price information from the IEX Cloud service API and uses that information to manage client portfolios in real-time. Clients can fund their accounts, buy & sell securities and view their portfolio details for a selected time period.
 
 The application has the following tests. All of which are currently passing. Security has been implemented and is being tested: 
 Ten (10) Unit tests for the Database services (ServicesTest.java)
@@ -77,7 +77,7 @@ Domain Models (Entities) and the data points are below:
 6. Client Transactions
 * noOfUnits
 * serialVersionUID
-* stock
+* stockQuote
 * transactionAmount
 * transactionStatus
 * transactionType

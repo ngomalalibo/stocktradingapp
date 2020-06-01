@@ -1,6 +1,6 @@
 package com.ngomalalibo.stocktradingapp.security;
 
-import com.ngomalalibo.stocktradingapp.entities.User;
+import com.ngomalalibo.stocktradingapp.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

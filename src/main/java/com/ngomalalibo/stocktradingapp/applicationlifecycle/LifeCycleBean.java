@@ -1,6 +1,6 @@
 package com.ngomalalibo.stocktradingapp.applicationlifecycle;
 
-import com.ngomalalibo.stocktradingapp.dataService.Connection;
+import com.ngomalalibo.stocktradingapp.repository.Connection;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.*;
