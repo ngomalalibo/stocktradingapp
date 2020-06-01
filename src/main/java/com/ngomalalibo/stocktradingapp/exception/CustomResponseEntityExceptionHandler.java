@@ -70,7 +70,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
             CustomNullPointerException ex)
     {
         ApiResponse apiResponse =
-                new ApiResponse(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), ex.getMessage());
+                new ApiResponse(HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), ex.getMessage());
         return buildResponseEntity(apiResponse);
     }
     
