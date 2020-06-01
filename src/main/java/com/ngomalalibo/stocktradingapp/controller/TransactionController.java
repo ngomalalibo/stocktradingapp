@@ -38,19 +38,19 @@ public class TransactionController
     public ResponseEntity<Object> transaction(@RequestBody HashMap<String, Object> request)
     {
         boolean successful;
-        Object transaction = request.get("trans");
-        if (transaction != null)
+        Object transactionType = request.get("transactiontype");
+        if (transactionType != null)
         {
-            if (transaction.toString().equalsIgnoreCase("buy"))
+            if (transactionType.toString().equalsIgnoreCase("buy"))
             {
                 successful = buyService.buy(request.get("companyname").toString(), request.get("username").toString(), Integer.parseInt(request.get("units").toString()));
                 
             }
-            else if (transaction.toString().equalsIgnoreCase("sell"))
+            else if (transactionType.toString().equalsIgnoreCase("sell"))
             {
                 successful = sellService.sell(request.get("companyname").toString(), request.get("username").toString(), Integer.parseInt(request.get("units").toString()));
             }
-            else if(transaction.toString().equalsIgnoreCase("fundaccount"))
+            else if(transactionType.toString().equalsIgnoreCase("fundaccount"))
             {
                 successful = fundAccountService.fundAccount(request.get("user").toString(), Double.parseDouble(request.get("deposit").toString()));
                 if (successful)
