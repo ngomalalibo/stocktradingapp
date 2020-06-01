@@ -7,12 +7,13 @@ https://stockportfoliomgr.herokuapp.com/transaction (params:  companyname, depos
 https://stockportfoliomgr.herokuapp.com/portfolio (param: username)
 https://stockportfoliomgr.herokuapp.com/stockprice/{companyname} eg. nflx for Netflix
 
-The Java application has been built using the Spring framework. The backend is a NoSQL MongoDB database hosted remotely on Atlas.
-The application retrieves current stock price information from the IEX Cloud service API and uses that information to manage client portfolios in real-time. Clients can fund their accounts, buy & sell securities and view their portfolio details for a selected time period using the /transaction endpoint.
+The Java application is built using the Spring framework. The backend is a NoSQL MongoDB database hosted remotely on Atlas.
+The application retrieves current stock price information from the IEX Cloud service API and uses that information to manage client portfolios in real-time. 
+Clients can fund their accounts, buy & sell securities and view their portfolio details for a selected time period using the /transaction endpoint.
 
-The application has the following tests. All of which are currently passing. Security has been implemented and is being tested: 
+The application has the a suite of unit and integration tests. All of which are currently passing. Token-based Security has been fully implemented: 
 Ten (10) Unit tests for the Database services
-Nine (13) Integration tests for the controllers and database services
+Thirteen (13) Integration tests for the controllers and database services
 
 The details of the implementation are as follows:
 Domain Models (Entities) and the data points are below: 

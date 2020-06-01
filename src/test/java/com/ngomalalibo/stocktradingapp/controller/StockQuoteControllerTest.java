@@ -79,11 +79,11 @@ class StockQuoteControllerTest
                                               .characterEncoding("UTF-8"))
                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
 //               .andDo(MockMvcResultHandlers.print())
-               .andExpect(MockMvcResultMatchers.status().isBadRequest())
+               .andExpect(MockMvcResultMatchers.status().isNotFound())
                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", Matchers.hasSize(1)));
         
         //SUCCEED TEST
-        mockMvc.perform(MockMvcRequestBuilders.get(registerURL)
+        mockMvc.perform(MockMvcRequestBuilders.post(registerURL)
                                               .contentType(MediaType.APPLICATION_JSON_VALUE)
                                               .content(objectMapper.writeValueAsBytes(passRequest))
                                               .characterEncoding("UTF-8"))
@@ -95,20 +95,26 @@ class StockQuoteControllerTest
     @Test
     void fundAccount() throws Exception
     {
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29tYWxhbGlib0B5YWhvby5jb20iLCJwYXNzd29yZCI6IiQyYSQxMSRHZk8wblI4Y055NDhVVGVTZ013NUN1clVONGl0bXRHUTMyazIvdk1TaEozMENzc3NCd2cvLiIsInJvbGVzIjoiVVNFUiIsImlhdCI6MTU5MTAxODQ1OCwiZXhwIjoxNTkxMDU0NDU4fQ.1C_3hL0Cmt9pWSirQMCuq0G7LC36D6VFmXr3FnaYVBc";
+        
         String template = "/transaction";
         String username = "john.snow@got.com";
         double deposit = 50000;
+        String transactionType = "fundaccount";
         
         HashMap<String, Object> request = new HashMap<String, Object>()
         {{
             put("user", username);
             put("deposit", deposit);
+            put("transactiontype", transactionType);
         }};
         fundaccountURL = template;
         log.info("fundaccountURL -> " + fundaccountURL);
         
         mockMvc.perform(MockMvcRequestBuilders.post(fundaccountURL)
-                                              .contentType("application/json").content(objectMapper.writeValueAsString(request)))
+                                              .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                              .param("token", token)
+                                              .content(objectMapper.writeValueAsString(request)))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
     
@@ -117,69 +123,68 @@ class StockQuoteControllerTest
     {
         StockRequest stockRequest = new StockRequest();
         stockRequest.setCompanyname("Netflix");
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29tYWxhbGlib0B5YWhvby5jb20iLCJwYXNzd29yZCI6IiQyYSQxMSRHZk8wblI4Y055NDhVVGVTZ013NUN1clVONGl0bXRHUTMyazIvdk1TaEozMENzc3NCd2cvLiIsInJvbGVzIjoiVVNFUiIsImlhdCI6MTU5MTAxODQ1OCwiZXhwIjoxNTkxMDU0NDU4fQ.1C_3hL0Cmt9pWSirQMCuq0G7LC36D6VFmXr3FnaYVBc";
         
         mockMvc.perform(MockMvcRequestBuilders.get("/stockprice/{companyname}", "nflx")
                                               .contentType(MediaType.APPLICATION_JSON)
+                                              .param("token", token)
                                               .content(objectMapper.writeValueAsString(stockRequest)))
-               .andExpect(MockMvcResultMatchers.status().isOk());
-    }
-    
-    @Test
-    void checkStockPrice() throws Exception
-    {
-        // String companyName = "Netflix, Inc.";
-        //
-        // Stock stock = new Stock(companyName, 500D);
-        //
-        String template = "/stockprice/{companyname}";
-        mockMvc.perform(MockMvcRequestBuilders.get(template, "nflx"))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
     
     @Test
     void buyStock() throws Exception
     {
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29tYWxhbGlib0B5YWhvby5jb20iLCJwYXNzd29yZCI6IiQyYSQxMSRHZk8wblI4Y055NDhVVGVTZ013NUN1clVONGl0bXRHUTMyazIvdk1TaEozMENzc3NCd2cvLiIsInJvbGVzIjoiVVNFUiIsImlhdCI6MTU5MTAxODQ1OCwiZXhwIjoxNTkxMDU0NDU4fQ.1C_3hL0Cmt9pWSirQMCuq0G7LC36D6VFmXr3FnaYVBc";
+        
         String template = "/transaction";
         String company = "nflx";
         String username = "john.snow@got.com";
+        String transactionType = "buy";
         int units = 2;
         HashMap<String, Object> request = new HashMap<String, Object>()
         {{
             put("companyname", company);
             put("username", username);
             put("units", units);
+            put("transactiontype", transactionType);
         }};
-        
-        
-        boolean result = true;
         
         buyURL = template;
         log.info("buyURL -> " + buyURL);
         
         mockMvc.perform(MockMvcRequestBuilders.post(buyURL)
-                                              .contentType("application/json").content(objectMapper.writeValueAsString(request)))
+                                              .contentType(MediaType.APPLICATION_JSON)
+                                              .param("token", token)
+                                              .content(objectMapper.writeValueAsString(request)))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
     
     @Test
     void sell() throws Exception
     {
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29tYWxhbGlib0B5YWhvby5jb20iLCJwYXNzd29yZCI6IiQyYSQxMSRHZk8wblI4Y055NDhVVGVTZ013NUN1clVONGl0bXRHUTMyazIvdk1TaEozMENzc3NCd2cvLiIsInJvbGVzIjoiVVNFUiIsImlhdCI6MTU5MTAxODQ1OCwiZXhwIjoxNTkxMDU0NDU4fQ.1C_3hL0Cmt9pWSirQMCuq0G7LC36D6VFmXr3FnaYVBc";
+        
         //test data
         String template = "/transaction";
         String company = "nflx";
         String username = "john.snow@got.com";
         int units = 1;
+        String transactionType = "sell";
         HashMap<String, Object> request = new HashMap<String, Object>()
         {{
             put("companyname", company);
             put("username", username);
             put("units", units);
+            put("transactiontype", transactionType);
         }};
         
         sellURL = template;
         
         mockMvc.perform(MockMvcRequestBuilders.post(sellURL)
-                                              .contentType("application/json").content(objectMapper.writeValueAsString(request)))
+                                              .contentType("application/json")
+                                              .param("token", token)
+                                              .content(objectMapper.writeValueAsString(request)))
                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -187,6 +192,8 @@ class StockQuoteControllerTest
     @Test
     void viewStocks_returnsClientPortfolio() throws Exception
     {
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29tYWxhbGlib0B5YWhvby5jb20iLCJwYXNzd29yZCI6IiQyYSQxMSRHZk8wblI4Y055NDhVVGVTZ013NUN1clVONGl0bXRHUTMyazIvdk1TaEozMENzc3NCd2cvLiIsInJvbGVzIjoiVVNFUiIsImlhdCI6MTU5MTAxODQ1OCwiZXhwIjoxNTkxMDU0NDU4fQ.1C_3hL0Cmt9pWSirQMCuq0G7LC36D6VFmXr3FnaYVBc";
+        
         String template = "/portfolio";
         String username = "john.snow@got.com";
         HashMap<String, Object> request = new HashMap<String, Object>()
@@ -195,7 +202,9 @@ class StockQuoteControllerTest
         }};
         portfolioURL = template;
         log.info("portfolioURL -> " + portfolioURL);
-        mockMvc.perform(MockMvcRequestBuilders.post(portfolioURL).contentType("application/json").content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(MockMvcRequestBuilders.post(portfolioURL).contentType(MediaType.APPLICATION_JSON)
+                                              .param("token", token)
+                                              .content(objectMapper.writeValueAsString(request)))
                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                .andExpect(MockMvcResultMatchers.status().isOk())
                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.aMapWithSize(16)))

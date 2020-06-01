@@ -17,6 +17,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.persistence.NonUniqueResultException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
@@ -92,6 +93,24 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         return buildResponseEntity(apiResponse);
     }
     
+    @ExceptionHandler({CustomAccessDeniedException.class})
+    protected ResponseEntity<Object> handleCustomAccessDeniedExceptionInternal(
+            CustomAccessDeniedException ex)
+    {
+        ApiResponse apiResponse =
+                new ApiResponse(HttpStatus.FORBIDDEN, ex.getLocalizedMessage(), ex.getMessage());
+        return buildResponseEntity(apiResponse);
+    }
+    
+    @ExceptionHandler({NonUniqueResultException.class})
+    protected ResponseEntity<Object> handleNonUniqueResultExceptionInternal(
+            NonUniqueResultException ex)
+    {
+        ApiResponse apiResponse =
+                new ApiResponse(HttpStatus.NOT_ACCEPTABLE, ex.getLocalizedMessage(), ex.getMessage());
+        return buildResponseEntity(apiResponse);
+    }
+    
     @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<Object> handleConstraintViolation(
             ConstraintViolationException ex, WebRequest request)
@@ -163,7 +182,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         return buildResponseEntity(apiResponse);
     }
     
-    @ExceptionHandler({Exception.class, CustomAccessDeniedException.class})  //Default
+    @ExceptionHandler({Exception.class})  //Default
     public ResponseEntity<Object> handleAll(Exception ex, WebRequest request)
     {
         ApiResponse apiResponse = new ApiResponse(

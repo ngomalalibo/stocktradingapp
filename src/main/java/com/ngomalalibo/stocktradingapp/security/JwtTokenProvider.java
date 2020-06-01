@@ -3,6 +3,7 @@ package com.ngomalalibo.stocktradingapp.security;
 import com.ngomalalibo.stocktradingapp.dataprovider.UsersDP;
 import com.ngomalalibo.stocktradingapp.entity.User;
 import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,8 +20,10 @@ public class JwtTokenProvider
     @Value("${security.jwt.token.secret-key:secret}")
     private static String secretKey = "secret";
     @Value("${security.jwt.token.expire-length:3600000}")
-    private static long validityInMilliseconds = 3600000; // 1h    @Autowired
-    private static UsersDP userDetailsService;
+    private static long validityInMilliseconds = 36000000; // 10hrs
+    
+    @Autowired
+    private UsersDP userDetailsService;
     
     @PostConstruct
     protected void init()
@@ -64,21 +67,14 @@ public class JwtTokenProvider
         return null;
     }*/
     
-    public boolean validateToken(String token)
+    public boolean validateToken(String token) throws JwtException
     {
-        try
+        
+        Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+        if (claims.getBody().getExpiration().before(new Date()))
         {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            if (claims.getBody().getExpiration().before(new Date()))
-            {
-                return false;
-            }
-            return true;
+            return false;
         }
-        catch (JwtException | IllegalArgumentException e)
-        {
-            throw new JwtException("Expired or invalid JWT token");
-            // throw new InvalidJwtAuthenticationException("Expired or invalid JWT token");
-        }
+        return true;
     }
 }
