@@ -1,4 +1,4 @@
-package com.ngomalalibo.stocktradingapp.service;
+package com.ngomalalibo.stocktradingapp.serviceImpl;
 
 import com.google.common.base.Strings;
 import com.ngomalalibo.stocktradingapp.entity.Client;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.NonUniqueResultException;
 
-import static com.ngomalalibo.stocktradingapp.service.UserConfirmation.exists;
+import static com.ngomalalibo.stocktradingapp.serviceImpl.UserConfirmation.exists;
 
 @Slf4j
 @Service

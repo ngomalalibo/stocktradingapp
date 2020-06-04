@@ -1,8 +1,5 @@
-package com.ngomalalibo.stocktradingapp.service;
+package com.ngomalalibo.stocktradingapp.serviceImpl;
 
-import com.ngomalalibo.stocktradingapp.entity.Client;
-import com.ngomalalibo.stocktradingapp.entity.ClientAccount;
-import com.ngomalalibo.stocktradingapp.entity.ClientTransaction;
 import com.ngomalalibo.stocktradingapp.entity.User;
 import com.ngomalalibo.stocktradingapp.repository.GenericDataService;
 import lombok.RequiredArgsConstructor;

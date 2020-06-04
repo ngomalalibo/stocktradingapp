@@ -1,6 +1,6 @@
 package com.ngomalalibo.stocktradingapp.applicationlifecycle;
 
-import com.ngomalalibo.stocktradingapp.repository.Connection;
+import com.ngomalalibo.stocktradingapp.database.MongoConnectionImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.*;
@@ -22,7 +22,7 @@ public class LifeCycleBean implements InitializingBean, DisposableBean, BeanName
 {
     public LifeCycleBean()
     {
-        Connection.startDB();
+        new MongoConnectionImpl().startDB();
         log.info("## I'm in the LifeCycleBean Constructor");
     }
     
@@ -30,7 +30,7 @@ public class LifeCycleBean implements InitializingBean, DisposableBean, BeanName
     public void destroy() throws Exception
     {
         log.info("## The Lifecycle bean has been terminated");
-        Connection.stopDB();
+        new MongoConnectionImpl().stopDB();
         
     }
     

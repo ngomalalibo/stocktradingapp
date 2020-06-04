@@ -1,9 +1,8 @@
-package com.ngomalalibo.stocktradingapp.service;
+package com.ngomalalibo.stocktradingapp.serviceImpl;
 
 import com.google.common.base.Strings;
 import com.ngomalalibo.stocktradingapp.entity.Client;
 import com.ngomalalibo.stocktradingapp.entity.ClientAccount;
-import com.ngomalalibo.stocktradingapp.entity.ClientTransaction;
 import com.ngomalalibo.stocktradingapp.entity.User;
 import com.ngomalalibo.stocktradingapp.exception.CustomNullPointerException;
 import com.ngomalalibo.stocktradingapp.repository.GenericDataService;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AccountService
 {
-    private static GenericDataService userGDS = new GenericDataService(new User());
+    private final GenericDataService userGDS = new GenericDataService(new User());
     private static GenericDataService clientGDS = new GenericDataService(new Client());
     private static GenericDataService clientAccountGDS = new GenericDataService(new ClientAccount());
     

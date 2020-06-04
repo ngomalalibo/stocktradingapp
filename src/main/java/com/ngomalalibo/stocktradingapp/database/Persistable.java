@@ -1,4 +1,4 @@
-package com.ngomalalibo.stocktradingapp.repository;
+package com.ngomalalibo.stocktradingapp.database;
 
 import com.ngomalalibo.stocktradingapp.entity.PersistingBaseEntity;
 

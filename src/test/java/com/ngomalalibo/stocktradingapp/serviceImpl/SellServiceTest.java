@@ -1,6 +1,5 @@
-package com.ngomalalibo.stocktradingapp.service;
+package com.ngomalalibo.stocktradingapp.serviceImpl;
 
-import com.ngomalalibo.stocktradingapp.repository.TestDataInitialization;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package com.ngomalalibo.stocktradingapp.service;
+package com.ngomalalibo.stocktradingapp.serviceImpl;
 
 import com.google.common.base.Strings;
 import com.ngomalalibo.stocktradingapp.entity.Client;

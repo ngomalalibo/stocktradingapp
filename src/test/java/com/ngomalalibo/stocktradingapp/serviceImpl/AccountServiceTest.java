@@ -1,18 +1,18 @@
-package com.ngomalalibo.stocktradingapp.service;
+package com.ngomalalibo.stocktradingapp.serviceImpl;
 
-import com.ngomalalibo.stocktradingapp.repository.TestDataInitialization;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-class FundAccountServiceTest
+class AccountServiceTest
 {
     @Mock
-    FundAccountService service;
+    AccountService service;
     
     @BeforeEach
     public void setup()
@@ -27,13 +27,15 @@ class FundAccountServiceTest
     }
     
     @Test
-    void fundAccount()
+    void getAccountBalance()
     {
+        double balance = 11_100_000D;
         String username = "john.snow@got.com";
-        double deposit = 5_000_000D;
         
-        Mockito.when(service.fundAccount(username, deposit)).thenReturn(true);
+        Mockito.when(service.getAccountBalance(username)).thenReturn(balance);
         
-        Assertions.assertTrue(service.fundAccount(username, deposit));
+        Double accountBalance = service.getAccountBalance(username);
+        Assertions.assertEquals(accountBalance, balance);
+        Mockito.verify(service, Mockito.times(1)).getAccountBalance(ArgumentMatchers.anyString());
     }
 }

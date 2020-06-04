@@ -1,4 +1,4 @@
-package com.ngomalalibo.stocktradingapp.service;
+package com.ngomalalibo.stocktradingapp.serviceImpl;
 
 import com.ngomalalibo.stocktradingapp.entity.StockQuote;
 import org.junit.jupiter.api.AfterEach;

@@ -16,7 +16,7 @@ import com.ngomalalibo.stocktradingapp.util.GetEntityNamesFromPackage;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.lang.reflect.Field;
@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 @Slf4j
-@Repository
+@Service
 public class GenericDataService
 {
     private MongoCollection collection;
@@ -47,8 +47,12 @@ public class GenericDataService
         super();
     }
     
-    public boolean isCollectionEmpty()
+    public boolean isCollectionNullorEmpty()
     {
+        if (collection == null)
+        {
+            return true;
+        }
         if (collection != null)
         {
             long l = collection.countDocuments();
@@ -63,51 +67,53 @@ public class GenericDataService
     public <B extends PersistingBaseEntity> GenericDataService(B bean)
     {
         super();
-        if (!isCollectionEmpty())
+        
+        if (!CustomNullChecker.nullObjectChecker(bean))
         {
-            if (!CustomNullChecker.nullObjectChecker(bean))
+            Set<String> entities = GetEntityNamesFromPackage.retrieveEntityNamesFromPackage("com.ngomalalibo.stocktradingapp.entity");
+            if (entities.size() <= 0)
             {
-                Set<String> entities = GetEntityNamesFromPackage.retrieveEntityNamesFromPackage("com.ngomalalibo.stocktradingapp.entities");
-                String name = bean.getClass().getSimpleName();
-                
-                entities.forEach(ent ->
+                throw new EntityNotFoundException("Entity not found");
+            }
+            String name = bean.getClass().getSimpleName();
+            entities.forEach(ent ->
+                             {
+                                 if (ent.equals(name))
                                  {
-                                     if (ent.equals(name))
+                                     collection = GetCollectionFromEntityName.getCollectionFromEntityName(name);
+                                     //System.out.println("collection = " + collection);
+                                     simpleName = name;
+                                 }
+                                 else
+                                 {
+                                     //collection = Connection.persons;
+                                     simpleName = name;
+                                     try
                                      {
-                                         collection = GetCollectionFromEntityName.getCollectionFromEntityName(name);
-                                         // System.out.println("collection = " + collection);
-                                         simpleName = name;
+                                         throw new EntityNotFoundException("Entity not found");
                                      }
-                                     else
+                                     catch (EntityNotFoundException e)
                                      {
-                                         //collection = Connection.persons;
-                                         simpleName = name;
-                                         try
-                                         {
-                                             throw new EntityNotFoundException("Entity not found");
-                                         }
-                                         catch (EntityNotFoundException e)
-                                         {
-                                             e.getMessage();
-                                         }
+                                         e.getMessage();
                                      }
                                  }
-                );
-            }
-            else
-            {
-                throw new CustomNullPointerException("attempting to instantiate generic data service for null object");
-            }
+                             }
+            );
         }
         else
         {
-            throw new CustomNullPointerException("Collection is empty");
+            throw new CustomNullPointerException("attempting to instantiate generic data service for null object");
         }
+        /*}
+        else
+        {
+            throw new CustomNullPointerException("Collection does not exist or is empty");
+        }*/
     }
     
     public <B extends PersistingBaseEntity> List<B> getRecordsByEntityKey(String key, String value, List<SortProperties> sortOrder)
     {
-        if (!isCollectionEmpty())
+        if (!isCollectionNullorEmpty())
         {
             int e = 0;
             // System.out.println("***getRecordsByEntityKey called***");
@@ -137,14 +143,14 @@ public class GenericDataService
         }
         else
         {
-            throw new CustomNullPointerException("Collection is empty");
+            throw new CustomNullPointerException("Collection is null or empty");
         }
         
     }
     
     public int getEntityByKeyCount(String key, String value)
     {
-        if (!isCollectionEmpty())
+        if (!isCollectionNullorEmpty())
         {
             if (!CustomNullChecker.emptyNullStringChecker(key) && !CustomNullChecker.emptyNullStringChecker(value))
             {
@@ -158,14 +164,14 @@ public class GenericDataService
         }
         else
         {
-            throw new CustomNullPointerException("Collection is empty");
+            throw new CustomNullPointerException("Collection is null or empty");
         }
         
     }
     
     public <B extends PersistingBaseEntity> PersistingBaseEntity getRecordByEntityProperty(String property, String value)
     {
-        if (!isCollectionEmpty())
+        if (!isCollectionNullorEmpty())
         {
             log.info("property -> " + property);
             log.info("value -> " + value);
@@ -186,7 +192,7 @@ public class GenericDataService
         }
         else
         {
-            throw new CustomNullPointerException("Collection is empty");
+            throw new CustomNullPointerException("Collection is null or empty");
         }
     }
     
@@ -206,7 +212,7 @@ public class GenericDataService
     //implementation retrieves a one-many data mapping. eg. Does returns Person with List<Addresses>
     public <B extends PersistingBaseEntity, S extends PersistingBaseEntity> Map<B, List<S>> getRecordAndEmbeddedObjectList(String mainEntity, String subEntity, String key, String keyValue, String foreignKey, String embeddedKey)
     {
-        if (!isCollectionEmpty())
+        if (!isCollectionNullorEmpty())
         {
             if (!CustomNullChecker.nullStringSChecker(subEntity, key, keyValue, foreignKey, embeddedKey))
             {
@@ -280,14 +286,14 @@ public class GenericDataService
         }
         else
         {
-            throw new CustomNullPointerException("Collection is empty");
+            throw new CustomNullPointerException("Collection is null or empty");
         }
     }
     
     //    public static Stream<Author> getAuthors()
     public <B extends PersistingBaseEntity> Stream<B> getEntitiesSorted(String sort, boolean asc)
     {
-        if (!isCollectionEmpty())
+        if (!isCollectionNullorEmpty())
         {
             if (!CustomNullChecker.emptyNullStringChecker(sort))
             {
@@ -305,14 +311,14 @@ public class GenericDataService
         }
         else
         {
-            throw new CustomNullPointerException("Collection is empty");
+            throw new CustomNullPointerException("Collection is null or empty");
         }
     }
     
     //    public static Stream<Author> getAllOfEntity()
     public <B extends PersistingBaseEntity> Stream<B> getAllOfEntity()
     {
-        if (!isCollectionEmpty())
+        if (!isCollectionNullorEmpty())
         {
             //collection is already set by constructor
             List<B> allRecords = new ArrayList<>();
@@ -324,7 +330,7 @@ public class GenericDataService
         }
         else
         {
-            throw new CustomNullPointerException("Collection is empty");
+            throw new CustomNullPointerException("Collection is null or empty");
         }
         
     }
@@ -335,7 +341,7 @@ public class GenericDataService
         /*System.out.println("filterOne = " + filterOne);
         System.out.println("filterTwo = " + filterTwo);
         System.out.println("name = " + name);*/
-        if (!isCollectionEmpty())
+        if (!isCollectionNullorEmpty())
         {
             List<B> searchResult = new ArrayList<>();
             Bson match;
@@ -363,7 +369,7 @@ public class GenericDataService
         }
         else
         {
-            throw new CustomNullPointerException("Collection is empty");
+            throw new CustomNullPointerException("Collection is null or empty");
         }
         
     }
@@ -372,7 +378,7 @@ public class GenericDataService
     //implementation does not retrieve a one-many data mapping. It returns a 1:1 mapping. eg. Does not return Person with List<Addresses>. It returns Person with singletonList List<Address>
     public <B extends PersistingBaseEntity, S extends PersistingBaseEntity> Map<B, List<S>> getEntityJoin(String name, String foreignId, String value, String foreignEntity, String filterOne, String filterTwo)
     {
-        if (!isCollectionEmpty())
+        if (!isCollectionNullorEmpty())
         {
             List<S> searchResult2 = new ArrayList<>();
             
@@ -410,14 +416,14 @@ public class GenericDataService
         }
         else
         {
-            throw new CustomNullPointerException("Collection is empty");
+            throw new CustomNullPointerException("Collection is null or empty");
         }
         
     }
     
     public <B extends PersistingBaseEntity, S extends PersistingBaseEntity> Map<B, List<S>> getOneEntityFromJoinById(String name, String foreignId, String value, String foreignEntity, String filterOne, String filterTwo, String bean, String primaryId)
     {
-        if (!isCollectionEmpty())
+        if (!isCollectionNullorEmpty())
         {
             Map<B, List<S>> entityJoin = getEntityJoin(name, foreignId, value, foreignEntity, filterOne, filterTwo);
             
@@ -427,7 +433,7 @@ public class GenericDataService
         }
         else
         {
-            throw new CustomNullPointerException("Collection is empty");
+            throw new CustomNullPointerException("Collection is null or empty");
         }
         
     }

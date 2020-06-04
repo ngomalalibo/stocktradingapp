@@ -1,4 +1,4 @@
-package com.ngomalalibo.stocktradingapp.service;
+package com.ngomalalibo.stocktradingapp.serviceImpl;
 
 import com.ngomalalibo.stocktradingapp.apiclient.StockQuoteApiClient;
 import com.ngomalalibo.stocktradingapp.entity.StockQuote;

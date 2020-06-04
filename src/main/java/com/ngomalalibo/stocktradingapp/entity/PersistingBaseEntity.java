@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
-import com.ngomalalibo.stocktradingapp.repository.Connection;
-import com.ngomalalibo.stocktradingapp.repository.Persistable;
+import com.ngomalalibo.stocktradingapp.database.MongoConnectionImpl;
+import com.ngomalalibo.stocktradingapp.database.Persistable;
 import com.ngomalalibo.stocktradingapp.enumeration.ActivityLogType;
 import com.ngomalalibo.stocktradingapp.enumeration.IDPrefixes;
 import com.ngomalalibo.stocktradingapp.util.CustomNullChecker;
@@ -16,12 +16,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.conversions.Bson;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.PrePersist;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -64,10 +64,16 @@ public class PersistingBaseEntity implements Serializable, Persistable, Cloneabl
     // @JsonIgnore
     // boolean b = false;
     
+    @BsonIgnore
+    @JsonIgnore
+    @Autowired
+    private MongoConnectionImpl database;
+    
     public PersistingBaseEntity()
     {
         super();
         prepersist(this);
+        this.database = new MongoConnectionImpl();
     }
     
     @Override
@@ -124,25 +130,6 @@ public class PersistingBaseEntity implements Serializable, Persistable, Cloneabl
         
     }
     
-    public <T extends PersistingBaseEntity> MongoCollection getPersistingCollectionFromClass(T t)
-    {
-        if (!CustomNullChecker.nullObjectChecker(t))
-        {
-            String simpleName = t.getClass().getSimpleName();
-            //System.out.println("IDPrefixes.valueOf(simpleName): " + IDPrefixes.valueOf(simpleName));
-            
-            Map<IDPrefixes, MongoCollection<?>> map = Connection.mapCollectionsAndIDPrefixes();
-            IDPrefixes idPrefix = IDPrefixes.valueOf(simpleName);
-            return map.get(idPrefix);
-        }
-        
-        else
-        {
-            throw new NullPointerException("no collection with provided entity");
-        }
-        
-    }
-    
     /**
      * Performs all saving and logging operations
      */
@@ -157,7 +144,7 @@ public class PersistingBaseEntity implements Serializable, Persistable, Cloneabl
             
             if (!CustomNullChecker.emptyNullStringChecker(entity.getUuid()))
             {
-                collection = getPersistingCollectionFromClass(entity);
+                collection = database.getPersistingCollectionFromClass(entity);
                 
                 collection.insertOne(entity);
                 log.info("Saved " + entity.getClass().getSimpleName());
@@ -166,7 +153,7 @@ public class PersistingBaseEntity implements Serializable, Persistable, Cloneabl
                 activityLog = new ActivityLog("User", "Saved(" + entity.getClass().getSimpleName() + " with " + uuid + ") ",
                                               "Saved(" + entity.getClass().getSimpleName() + " with " + uuid + ") ", ActivityLogType.INFO, entity.getClass().getSimpleName());
                 
-                logCollection = getPersistingCollectionFromClass(activityLog);
+                logCollection = database.getPersistingCollectionFromClass(activityLog);
                 
                 logCollection.insertOne(activityLog);
                 
@@ -201,7 +188,7 @@ public class PersistingBaseEntity implements Serializable, Persistable, Cloneabl
         {
             if (!CustomNullChecker.emptyNullStringChecker(newEntity.getUuid()))
             {
-                collection = getPersistingCollectionFromClass(oldEntity);
+                collection = database.getPersistingCollectionFromClass(oldEntity);
                 Bson query = Filters.eq("_id", oldEntity.getUuid());
                 newEntity.setUuid(oldEntity.getUuid());
                 collection.replaceOne(query, newEntity);
@@ -211,7 +198,7 @@ public class PersistingBaseEntity implements Serializable, Persistable, Cloneabl
                 activityLog = new ActivityLog("User", "Updated(" + newEntity.getClass().getSimpleName() + " with " + uuid + ") ",
                                               "Updated author:" + newEntity + " with " + uuid + ") ", ActivityLogType.INFO, newEntity.getClass().getSimpleName());
                 
-                logCollection = getPersistingCollectionFromClass(activityLog);
+                logCollection = database.getPersistingCollectionFromClass(activityLog);
                 
                 logCollection.insertOne(activityLog);
                 log.info("Updated " + oldEntity.getClass().getSimpleName());
@@ -227,7 +214,7 @@ public class PersistingBaseEntity implements Serializable, Persistable, Cloneabl
             System.out.println("Exception.getMessage() = " + me.getMessage() + " Cause: " + me.getCause());
             activityLog = new ActivityLog("User", "Not Saved(" + newEntity.getClass().getSimpleName() + " with " + uuid + ") ",
                                           "Error Message" + me.getMessage(), ActivityLogType.ERROR, newEntity.getClass().getSimpleName());
-            logCollection = getPersistingCollectionFromClass(activityLog);
+            logCollection = database.getPersistingCollectionFromClass(activityLog);
             logCollection.insertOne(activityLog);
         }
         
@@ -304,7 +291,7 @@ public class PersistingBaseEntity implements Serializable, Persistable, Cloneabl
         {
             log.info("delete(" + t.getUuid() + ")");
             Bson deleteFilter = Filters.eq("_id", t.getUuid());
-            MongoCollection collection = getPersistingCollectionFromClass(t);
+            MongoCollection collection = database.getPersistingCollectionFromClass(t);
             DeleteResult deleteResult = collection.deleteOne(deleteFilter);
             
             long deletedCount = deleteResult.getDeletedCount();
@@ -314,13 +301,13 @@ public class PersistingBaseEntity implements Serializable, Persistable, Cloneabl
                 activityLog = new ActivityLog("Session User", "Deleted(" + t.getClass()
                                                                             .getSimpleName() + " with " + uuid + ") ", "Deleted(" + t.getClass()
                                                                                                                                      .getSimpleName() + " with " + uuid + ") ", ActivityLogType.INFO, t.getClass().getSimpleName());
-                Connection.activityLog.insertOne(activityLog);
+                MongoConnectionImpl.activityLog.insertOne(activityLog);
             }
             else
             {
                 activityLog = new ActivityLog("Session User", "Delete not successful", t.getClass()
                                                                                         .getSimpleName() + " with " + t.getUuid() + ") ", ActivityLogType.ERROR, t.getClass().getSimpleName());
-                Connection.activityLog.insertOne(activityLog);
+                MongoConnectionImpl.activityLog.insertOne(activityLog);
             }
         }
         else
@@ -344,7 +331,7 @@ public class PersistingBaseEntity implements Serializable, Persistable, Cloneabl
                           {
                               log.info("delete(" + d.getUuid() + ")");
                               deleteFilter = Filters.eq("_id", d.getUuid());
-                              collection = getPersistingCollectionFromClass(d);
+                              collection = database.getPersistingCollectionFromClass(d);
                               deleteResult = collection.deleteOne(deleteFilter);
                               long deletedCount = deleteResult.getDeletedCount();
                               if (deletedCount == 1)
@@ -353,13 +340,13 @@ public class PersistingBaseEntity implements Serializable, Persistable, Cloneabl
                                   activityLog = new ActivityLog("Session User", "Deleted(" + t.getClass()
                                                                                               .getSimpleName() + " with " + uuid + ") ", "Deleted(" + t.getClass()
                                                                                                                                                        .getSimpleName() + " with " + uuid + ") ", ActivityLogType.INFO, t.getClass().getSimpleName());
-                                  Connection.activityLog.insertOne(activityLog);
+                                  MongoConnectionImpl.activityLog.insertOne(activityLog);
                               }
                               else
                               {
                                   activityLog = new ActivityLog("Session User", "Delete not successful", t.getClass()
                                                                                                           .getSimpleName() + " with " + d.getUuid() + ") ", ActivityLogType.ERROR, t.getClass().getSimpleName());
-                                  Connection.activityLog.insertOne(activityLog);
+                                  MongoConnectionImpl.activityLog.insertOne(activityLog);
                               }
                           }
                           else

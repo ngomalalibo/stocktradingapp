@@ -5,15 +5,14 @@ import com.ngomalalibo.stocktradingapp.entity.ClientTransaction;
 import com.ngomalalibo.stocktradingapp.exception.ApiResponse;
 import com.ngomalalibo.stocktradingapp.exception.CustomNullPointerException;
 import com.ngomalalibo.stocktradingapp.exception.InsufficientCaseException;
-import com.ngomalalibo.stocktradingapp.service.ClientTransactionsService;
-import com.ngomalalibo.stocktradingapp.service.PortfolioService;
+import com.ngomalalibo.stocktradingapp.serviceImpl.ClientTransactionsService;
+import com.ngomalalibo.stocktradingapp.serviceImpl.PortfolioService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -28,9 +27,7 @@ public class PortfolioController
     @Autowired
     PortfolioService services;
     
-    // @Secured(value = {"USER"})
-    // @PreAuthorize("hasAuthority('ROLE_USER')")
-    @RequestMapping(value = "/portfolio", method = RequestMethod.POST)
+    @PostMapping("/portfolio")
     public ResponseEntity<Object> viewStocks(@RequestBody HashMap<String, Object> request)
     {
         try

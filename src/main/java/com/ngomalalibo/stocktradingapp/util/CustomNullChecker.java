@@ -15,7 +15,6 @@ public interface CustomNullChecker
         if (Objects.isNull(t))
         {
             b = true;
-            // throw new NullPointerException("Caught by custom null Object checker");
         }
         else
         {

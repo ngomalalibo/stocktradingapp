@@ -58,7 +58,7 @@ public class GetEntityNamesFromPackage
         entityNames.add("ClientAccount");
         entityNames.add("ClientPortFolio");
         entityNames.add("ClientTransaction");
-        entityNames.add("Note");
+        entityNames.add("StockQuote");
         entityNames.add("User");
         
         
@@ -68,7 +68,7 @@ public class GetEntityNamesFromPackage
     
     public static void main(String[] args)
     {
-        Set<String> entities = retrieveEntityNamesFromPackage("com.pc.weblibrarian.entities");
+        Set<String> entities = retrieveEntityNamesFromPackage("com.ngomalalibo.stocktradingapp.entity");
         entities.forEach(log::info);
     }
 }

@@ -1,28 +1,13 @@
-package com.ngomalalibo.stocktradingapp.repository;
+package com.ngomalalibo.stocktradingapp.database;
 
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.client.*;
-import com.ngomalalibo.stocktradingapp.codec.IDPrefixCodec;
-import com.ngomalalibo.stocktradingapp.entity.*;
-import com.ngomalalibo.stocktradingapp.enumeration.IDPrefixes;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
-import org.bson.codecs.configuration.CodecProvider;
-import org.bson.codecs.configuration.CodecRegistries;
-import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.codecs.pojo.PojoCodecProvider;
-import org.glassfish.jersey.internal.guava.Iterators;
 import org.springframework.stereotype.Repository;
-
-import java.util.HashMap;
-import java.util.HashSet;
 
 @Slf4j
 @Repository
-public class Connection<T extends PersistingBaseEntity>
+public class Connection
 {
-    public static final String DBNAME = "stocks";
+    /*public static final String DBNAME = "stocks";
     public static final String DB_ORGANIZATION = "Stock Trading Inc.";
     public static final String DB_ACTIVITYLOG = "activitylogs";
     public static final String DB_CLIENT = "clients";
@@ -168,30 +153,32 @@ public class Connection<T extends PersistingBaseEntity>
         db = null;
     }
     
-    /*@Override
+   *//* @Override
     public void contextInitialized(ServletContextEvent s)
     {
         log.info(" -> contextInitialized");
         //startDB();
         
-        */
-    
-    /**
-     * TODO> uncomment 4 lines below to createCollections, initialize database, load defaults and get database statistics
-     * createAllCollections();
-     * initializeDatabase();
-     * DataInitialization.reloadDefaults();
-     * getDBStats();
-     *//*
-    }*/
-    
-    /*@Override
+        
+        *//*
+ 
+ *//**
+ * TODO> uncomment 4 lines below to createCollections, initialize database, load defaults and get database statistics
+ * createAllCollections();
+ * initializeDatabase();
+ * DataInitialization.reloadDefaults();
+ * getDBStats();
+ *//**//*
+     
+    }*//*
+ *//*
+    @Override
     public void contextDestroyed(ServletContextEvent s)
     {
         log.info(" -> contextDestroyed");
         stopDB();
-    }*/
-    public static MongoDatabase getDBConnections()
+    }*//*
+    public static MongoDatabase getDBConnection()
     {
         DBSTR = System.getenv().get("MONGODB_DATABASE_STOCKS_ATLAS");
         if (db == null || mongo == null)
@@ -202,15 +189,10 @@ public class Connection<T extends PersistingBaseEntity>
         return db;
     }
     
-    public static MongoDatabase getDS()
-    {
-        return db;
-    }
-    
     
     public Document getDBStats()
     {
-        MongoDatabase ds = getDBConnections();
+        MongoDatabase ds = getDBConnection();
         Document stats = ds.runCommand(new Document("dbstats", 1024));
         System.out.println("DBStats: " + stats.toJson());
         
@@ -220,7 +202,7 @@ public class Connection<T extends PersistingBaseEntity>
     public static int createAllCollections()
     {
         log.warn("---------------------------- Creating Collections");
-        MongoDatabase db = getDBConnections();
+        MongoDatabase db = getDBConnection();
 //        MongoIterable<String> colls = dataService.listCollectionNames();
         MongoIterable<String> colls = db.listCollectionNames();
         
@@ -238,10 +220,10 @@ public class Connection<T extends PersistingBaseEntity>
         createCollection(cols, DB_USER);
         
         
-       /* if (!cols.contains(DB_ADDRESS))
+        *//*if (!cols.contains(DB_ADDRESS))
         {
             db.createCollection(DB_ADDRESS);
-        }*/
+        }*//*
         log.warn("---------------------------- Collections Created");
         return Iterators.size(db.listCollections().iterator());
     }
@@ -252,7 +234,6 @@ public class Connection<T extends PersistingBaseEntity>
         {
             db.createCollection(collection);
         }
-    }
-    
+    }*/
     
 }

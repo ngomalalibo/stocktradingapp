@@ -1,16 +1,15 @@
 package com.ngomalalibo.stocktradingapp.controller;
 
 import com.ngomalalibo.stocktradingapp.exception.ApiResponse;
-import com.ngomalalibo.stocktradingapp.service.BuyService;
-import com.ngomalalibo.stocktradingapp.service.FundAccountService;
-import com.ngomalalibo.stocktradingapp.service.SellService;
+import com.ngomalalibo.stocktradingapp.serviceImpl.BuyService;
+import com.ngomalalibo.stocktradingapp.serviceImpl.FundAccountService;
+import com.ngomalalibo.stocktradingapp.serviceImpl.SellService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -30,11 +29,30 @@ public class TransactionController
     @Autowired
     FundAccountService fundAccountService;
     
-    // @Secured(value = {"ADMIN"})
-    // @PreAuthorize("hasRole('ROLE_ADMIN')")
-    // @RequestMapping(value = "/buy", consumes = "application/json", produces = "application/json", method = RequestMethod.POST, params = {"companyname", "username", "units"})
+    /**
+     * @Getter class Pojo {
+     * String type;
+     * }
+     * <p>
+     * interface Transctn{
+     * String apply(String param);
+     * }
+     * <p>
+     * private Map<String,Transctn> txnMap  = new HashMap<>();
+     * @PostConstruct public void init(){
+     * txnMap.put("buy", (e ) -> "");
+     * txnMap.put("sell", (e ) -> "");
+     * txnMap.put("fund", (e ) -> "");
+     * }
+     * @PostMapping public ResponseEntity<?> txn(Pojo pojo) {
+     * <p>
+     * txnMap.get(pojo.getType()).apply("");
+     * <p>
+     * <p>
+     * }
+     */
+    
     @PostMapping("/transaction")
-    @ResponseBody
     public ResponseEntity<Object> transaction(@RequestBody HashMap<String, Object> request)
     {
         boolean successful;
@@ -50,7 +68,7 @@ public class TransactionController
             {
                 successful = sellService.sell(request.get("companyname").toString(), request.get("username").toString(), Integer.parseInt(request.get("units").toString()));
             }
-            else if(transactionType.toString().equalsIgnoreCase("fundaccount"))
+            else if (transactionType.toString().equalsIgnoreCase("fundaccount"))
             {
                 successful = fundAccountService.fundAccount(request.get("user").toString(), Double.parseDouble(request.get("deposit").toString()));
                 if (successful)

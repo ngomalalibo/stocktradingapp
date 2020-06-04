@@ -66,7 +66,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         return buildResponseEntity(apiResponse);
     }
     
-    @ExceptionHandler({CustomNullPointerException.class})
+    @ExceptionHandler(CustomNullPointerException.class)
     protected ResponseEntity<Object> handleCustomNullPointerExceptionInternal(
             CustomNullPointerException ex)
     {
@@ -75,7 +75,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         return buildResponseEntity(apiResponse);
     }
     
-    @ExceptionHandler({CustomRuntimeException.class})
+    @ExceptionHandler(CustomRuntimeException.class)
     protected ResponseEntity<Object> handleCustomRuntimeExceptionInternal(
             CustomRuntimeException ex)
     {
@@ -84,7 +84,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         return buildResponseEntity(apiResponse);
     }
     
-    @ExceptionHandler({InsufficientCaseException.class})
+    @ExceptionHandler(InsufficientCaseException.class)
     protected ResponseEntity<Object> handleInsufficientCaseExceptionInternal(
             InsufficientCaseException ex)
     {
@@ -93,7 +93,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         return buildResponseEntity(apiResponse);
     }
     
-    @ExceptionHandler({CustomAccessDeniedException.class})
+    @ExceptionHandler(CustomAccessDeniedException.class)
     protected ResponseEntity<Object> handleCustomAccessDeniedExceptionInternal(
             CustomAccessDeniedException ex)
     {
@@ -102,7 +102,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         return buildResponseEntity(apiResponse);
     }
     
-    @ExceptionHandler({NonUniqueResultException.class})
+    @ExceptionHandler(NonUniqueResultException.class)
     protected ResponseEntity<Object> handleNonUniqueResultExceptionInternal(
             NonUniqueResultException ex)
     {

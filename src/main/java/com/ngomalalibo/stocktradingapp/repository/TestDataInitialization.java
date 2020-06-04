@@ -1,5 +1,6 @@
 package com.ngomalalibo.stocktradingapp.repository;
 
+import com.ngomalalibo.stocktradingapp.database.MongoConnectionImpl;
 import com.ngomalalibo.stocktradingapp.entity.*;
 import com.ngomalalibo.stocktradingapp.enumeration.ActivityLogType;
 import com.ngomalalibo.stocktradingapp.enumeration.ClientTransactionStatus;
@@ -25,11 +26,11 @@ public class TestDataInitialization
     
     public static void main(String[] args)
     {
-        Connection.startDB();
+        new MongoConnectionImpl().startDB();
         log.info("initializing database");
         TestDataInitialization init = new TestDataInitialization();
         log.info("Initialization complete");
-        Connection.stopDB();
+        new MongoConnectionImpl().stopDB();
         
     }
     
