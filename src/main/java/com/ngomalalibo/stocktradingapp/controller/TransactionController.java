@@ -2,10 +2,12 @@ package com.ngomalalibo.stocktradingapp.controller;
 
 import com.ngomalalibo.stocktradingapp.exception.ApiResponse;
 import com.ngomalalibo.stocktradingapp.serviceImpl.BuyService;
+import com.ngomalalibo.stocktradingapp.serviceImpl.ClientService;
 import com.ngomalalibo.stocktradingapp.serviceImpl.FundAccountService;
 import com.ngomalalibo.stocktradingapp.serviceImpl.SellService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,14 +22,17 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 public class TransactionController
 {
+    @Qualifier("buyService")
     @Autowired
-    BuyService buyService;
+    ClientService buyService;
     
+    @Qualifier("sellService")
     @Autowired
-    SellService sellService;
+    ClientService sellService;
     
+    @Qualifier("fundAccountService")
     @Autowired
-    FundAccountService fundAccountService;
+    ClientService fundAccountService;
     
     /**
      * @Getter class Pojo {
@@ -55,22 +60,25 @@ public class TransactionController
     @PostMapping("/transaction")
     public ResponseEntity<Object> transaction(@RequestBody HashMap<String, Object> request)
     {
-        boolean successful;
-        Object transactionType = request.get("transactiontype");
+        Boolean successful;
+        String transactionType = request.get("transactiontype").toString();
         if (transactionType != null)
         {
-            if (transactionType.toString().equalsIgnoreCase("buy"))
+            if (transactionType.equalsIgnoreCase("buy"))
             {
-                successful = buyService.buy(request.get("companyname").toString(), request.get("username").toString(), Integer.parseInt(request.get("units").toString()));
+                successful = (Boolean)buyService.service(request);
+//                successful = buyService.buy(request.get("companyname").toString(), request.get("username").toString(), Integer.parseInt(request.get("units").toString()));
                 
             }
-            else if (transactionType.toString().equalsIgnoreCase("sell"))
+            else if (transactionType.equalsIgnoreCase("sell"))
             {
-                successful = sellService.sell(request.get("companyname").toString(), request.get("username").toString(), Integer.parseInt(request.get("units").toString()));
+                successful = (Boolean)sellService.service(request);
+//                successful = sellService.sell(request.get("companyname").toString(), request.get("username").toString(), Integer.parseInt(request.get("units").toString()));
             }
-            else if (transactionType.toString().equalsIgnoreCase("fundaccount"))
+            else if (transactionType.equalsIgnoreCase("fundaccount"))
             {
-                successful = fundAccountService.fundAccount(request.get("user").toString(), Double.parseDouble(request.get("deposit").toString()));
+                successful = (Boolean) fundAccountService.service(request);
+//                successful = fundAccountService.fundAccount(request.get("user").toString(), Double.parseDouble(request.get("deposit").toString()));
                 if (successful)
                 {
                     ApiResponse apiResponse = new ApiResponse(HttpStatus.OK, "Account funded successfully", HttpStatus.OK.getReasonPhrase());

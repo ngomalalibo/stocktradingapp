@@ -2,7 +2,7 @@ package com.ngomalalibo.stocktradingapp.serviceImpl;
 
 import com.ngomalalibo.stocktradingapp.entity.*;
 import com.ngomalalibo.stocktradingapp.enumeration.ActivityLogType;
-import com.ngomalalibo.stocktradingapp.repository.GenericDataService;
+import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,10 +20,10 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 public class LoginService
 {
-    private static GenericDataService userGDS = new GenericDataService(new User());
-    private static GenericDataService clientGDS = new GenericDataService(new Client());
-    private static GenericDataService clientAccountGDS = new GenericDataService(new ClientAccount());
-    private static GenericDataService transactionsGDS = new GenericDataService(new ClientTransaction());
+    private static GenericDataRepository userGDS = new GenericDataRepository(new User());
+    private static GenericDataRepository clientGDS = new GenericDataRepository(new Client());
+    private static GenericDataRepository clientAccountGDS = new GenericDataRepository(new ClientAccount());
+    private static GenericDataRepository transactionsGDS = new GenericDataRepository(new ClientTransaction());
     public static boolean loginStatus = false;
     
     // login to application with spring security providing form-based authentication and authorization

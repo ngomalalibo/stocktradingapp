@@ -71,10 +71,11 @@ public class JwtTokenProvider
     {
         
         Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-        if (claims.getBody().getExpiration().before(new Date()))
+        // remove token expiry.
+        /*if (claims.getBody().getExpiration().before(new Date()))
         {
             return false;
-        }
+        }*/
         return true;
     }
 }

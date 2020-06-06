@@ -8,10 +8,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.HashMap;
+import java.util.Map;
+
 class FundAccountServiceTest
 {
     @Mock
-    FundAccountService service;
+    ClientService service;
     
     @BeforeEach
     public void setup()
@@ -30,9 +33,12 @@ class FundAccountServiceTest
     {
         String username = "john.snow@got.com";
         double deposit = 5_000_000D;
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", "john.snow@got.com");
+        params.put("deposit", 5_000_000D);
         
-        Mockito.when(service.fundAccount(username, deposit)).thenReturn(true);
+        Mockito.when(service.service(params)).thenReturn(true);
         
-        Assertions.assertTrue(service.fundAccount(username, deposit));
+        Assertions.assertTrue((Boolean) service.service(params));
     }
 }

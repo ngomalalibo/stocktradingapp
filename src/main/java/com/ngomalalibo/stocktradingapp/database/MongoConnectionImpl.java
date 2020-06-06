@@ -6,7 +6,7 @@ import com.mongodb.client.*;
 import com.ngomalalibo.stocktradingapp.codec.IDPrefixCodec;
 import com.ngomalalibo.stocktradingapp.entity.*;
 import com.ngomalalibo.stocktradingapp.enumeration.IDPrefixes;
-import com.ngomalalibo.stocktradingapp.repository.GenericDataService;
+import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
 import com.ngomalalibo.stocktradingapp.util.CustomNullChecker;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -123,7 +123,7 @@ public class MongoConnectionImpl implements DatabaseConnection
     {
         MongoConnectionImpl mongo = new MongoConnectionImpl();
         mongo.startDB();
-        GenericDataService use = new GenericDataService(new User());
+        GenericDataRepository use = new GenericDataRepository(new User());
         User username = (User) use.getRecordByEntityProperty("username", "ngomalalibo@yahoo.com");
         System.out.println("username = " + username);
         mongo.stopDB();

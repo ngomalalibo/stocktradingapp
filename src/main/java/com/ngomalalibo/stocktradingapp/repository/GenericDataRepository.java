@@ -13,10 +13,11 @@ import com.ngomalalibo.stocktradingapp.exception.CustomNullPointerException;
 import com.ngomalalibo.stocktradingapp.util.CustomNullChecker;
 import com.ngomalalibo.stocktradingapp.util.GetCollectionFromEntityName;
 import com.ngomalalibo.stocktradingapp.util.GetEntityNamesFromPackage;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityNotFoundException;
 import java.lang.reflect.Field;
@@ -26,23 +27,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 @Slf4j
-@Service
-public class GenericDataService
+@Repository
+@Getter
+public class GenericDataRepository
 {
     private MongoCollection collection;
     private String simpleName;
     
-    public MongoCollection getCollection()
-    {
-        return collection;
-    }
-    
-    public String getSimpleName()
-    {
-        return simpleName;
-    }
-    
-    public GenericDataService()
+    public GenericDataRepository()
     {
         super();
     }
@@ -53,18 +45,10 @@ public class GenericDataService
         {
             return true;
         }
-        if (collection != null)
-        {
-            long l = collection.countDocuments();
-            if (l <= 0)
-            {
-                return true;
-            }
-        }
-        return false;
+        return collection.countDocuments() <= 0;
     }
     
-    public <B extends PersistingBaseEntity> GenericDataService(B bean)
+    public <B extends PersistingBaseEntity> GenericDataRepository(B bean)
     {
         super();
         
@@ -86,7 +70,6 @@ public class GenericDataService
                                  }
                                  else
                                  {
-                                     //collection = Connection.persons;
                                      simpleName = name;
                                      try
                                      {
@@ -173,12 +156,11 @@ public class GenericDataService
     {
         if (!isCollectionNullorEmpty())
         {
-            log.info("property -> " + property);
-            log.info("value -> " + value);
+//            log.info("property -> " + property);
+//            log.info("value -> " + value);
             if (!Strings.isNullOrEmpty(property) && !Strings.isNullOrEmpty(value))
             {
                 AtomicReference<PersistingBaseEntity> returnB = new AtomicReference<>();
-                // System.out.println("Id is " + property + " and value is " + value);
                 Bson filter = Filters.eq(property.trim(), value.trim());
                 Optional.ofNullable(collection.find(filter).first()).ifPresent(d -> returnB.set((B) d));
                 
@@ -195,19 +177,6 @@ public class GenericDataService
             throw new CustomNullPointerException("Collection is null or empty");
         }
     }
-    
-    /*public B getEntityByName(String key, String value)
-    {
-        //key in author is aka
-        Bson filter = Filters.eq(key, value);
-        Optional<B> optional = Optional.ofNullable(collection.find(filter).first());
-        B bean = null;
-        if (optional.isPresent())
-        {
-            bean = optional.get();
-        }
-        return bean;
-    }*/
     
     //implementation retrieves a one-many data mapping. eg. Does returns Person with List<Addresses>
     public <B extends PersistingBaseEntity, S extends PersistingBaseEntity> Map<B, List<S>> getRecordAndEmbeddedObjectList(String mainEntity, String subEntity, String key, String keyValue, String foreignKey, String embeddedKey)
@@ -435,8 +404,5 @@ public class GenericDataService
         {
             throw new CustomNullPointerException("Collection is null or empty");
         }
-        
     }
-    
-    
 }

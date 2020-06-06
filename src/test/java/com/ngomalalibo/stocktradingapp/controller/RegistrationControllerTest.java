@@ -2,6 +2,7 @@ package com.ngomalalibo.stocktradingapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ngomalalibo.stocktradingapp.repository.TestDataInitialization;
+import com.ngomalalibo.stocktradingapp.serviceImpl.RegistrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,4 +85,17 @@ class RegistrationControllerTest
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
     
+    @Test
+    public void currentUser() throws Exception
+    {
+        String template = "/me";
+        
+        mockMvc.perform(MockMvcRequestBuilders.post(template)
+                                              .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                              .param("token", RegistrationService.token)
+                                              .characterEncoding("UTF-8"))
+               .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(MockMvcResultMatchers.jsonPath("$.username", Matchers.equalTo("ngomalalibo@yahoo.com")))
+               .andExpect(MockMvcResultMatchers.status().isOk());
+    }
 }

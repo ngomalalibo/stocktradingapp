@@ -1,6 +1,7 @@
 package com.ngomalalibo.stocktradingapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ngomalalibo.stocktradingapp.serviceImpl.RegistrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,8 +23,6 @@ class TransactionControllerTest
     private static String buyURL;
     private static String sellURL;
     private static String fundaccountURL;
-    
-    private String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29tYWxhbGlib0B5YWhvby5jb20iLCJwYXNzd29yZCI6IiQyYSQxMSRRM0lVVjlRRVJWWE5JNXgueVVIaDRlOURHVi9YRVBUUFM0bTVCVUJIcWd0VkNRL0g3VWZTbSIsInJvbGVzIjoiVVNFUiIsImlhdCI6MTU5MTI2NTkyNywiZXhwIjoxNTkxMzAxOTI3fQ.T7ckYLfHT1Uzk2OGMNF7KSkmHOpg1HPw1PsnPyCTNCE";
     
     @Autowired
     private MockMvc mockMvc;
@@ -47,7 +46,7 @@ class TransactionControllerTest
         
         HashMap<String, Object> request = new HashMap<String, Object>()
         {{
-            put("user", username);
+            put("username", username);
             put("deposit", deposit);
             put("transactiontype", transactionType);
         }};
@@ -56,7 +55,7 @@ class TransactionControllerTest
         
         mockMvc.perform(MockMvcRequestBuilders.post(fundaccountURL)
                                               .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                              .param("token", token)
+                                              .param("token", RegistrationService.token)
                                               .content(objectMapper.writeValueAsString(request)))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -83,7 +82,7 @@ class TransactionControllerTest
         
         mockMvc.perform(MockMvcRequestBuilders.post(buyURL)
                                               .contentType(MediaType.APPLICATION_JSON)
-                                              .param("token", token)
+                                              .param("token", RegistrationService.token)
                                               .content(objectMapper.writeValueAsString(request)))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -109,7 +108,7 @@ class TransactionControllerTest
         
         mockMvc.perform(MockMvcRequestBuilders.post(sellURL)
                                               .contentType("application/json")
-                                              .param("token", token)
+                                              .param("token", RegistrationService.token)
                                               .content(objectMapper.writeValueAsString(request)))
                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                .andExpect(MockMvcResultMatchers.status().isOk());

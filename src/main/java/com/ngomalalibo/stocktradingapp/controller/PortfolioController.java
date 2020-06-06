@@ -32,10 +32,12 @@ public class PortfolioController
     {
         try
         {
-            List<ClientTransaction> allClientTransactions = new ClientTransactionsService().getAllClientTransactions(request.get("username").toString());
+            List<ClientTransaction> allClientTransactions = (List<ClientTransaction>) new ClientTransactionsService().service(request);
             if (allClientTransactions != null && allClientTransactions.size() > 0)
             {
-                ClientPortfolio portfolio = services.getPortfolio(allClientTransactions, request.get("username").toString());
+                request.put("allClientTransactions", allClientTransactions);
+                
+                ClientPortfolio portfolio = (ClientPortfolio) new PortfolioService().service(request);
                 return ok(portfolio);
             }
             else

@@ -14,14 +14,16 @@ import org.mockito.MockitoAnnotations;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class PortfolioServiceTest
 {
     TestDataInitialization data;
     
     @Mock
-    PortfolioService service;
+    ClientService service;
     
     @BeforeEach
     public void setup()
@@ -43,10 +45,13 @@ class PortfolioServiceTest
         String username = "john.snow@got.com";
         
         ClientPortfolio portfolio = data.initializePortfolio();
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", "john.snow@got.com");
+        params.put("allClientTransactions", clientTransactions);
         
-        Mockito.when(service.getPortfolio(clientTransactions, username)).thenReturn(portfolio);
+        Mockito.when(service.service(params)).thenReturn(portfolio);
         
-        ClientPortfolio clientPortfolio = service.getPortfolio(clientTransactions, username);
+        ClientPortfolio clientPortfolio = (ClientPortfolio) service.service(params);
         
         Assertions.assertEquals(clientPortfolio.getEvaluation(), portfolio.getEvaluation());
         Assertions.assertEquals(clientPortfolio.getUsername(), portfolio.getUsername());
@@ -63,10 +68,16 @@ class PortfolioServiceTest
         String username = "john.snow@got.com";
         
         ClientPortfolio portfolio = data.initializePortfolio();
+    
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", "john.snow@got.com");
+        params.put("allClientTransactions", clientTransactions);
+        params.put("from", from);
+        params.put("to", to);
         
-        Mockito.when(service.getPortfolioForPeriod(clientTransactions, username, from, to)).thenReturn(portfolio);
+        Mockito.when(service.service(params)).thenReturn(portfolio);
         
-        ClientPortfolio clientPortfolio = service.getPortfolioForPeriod(clientTransactions, username, from, to);
+        ClientPortfolio clientPortfolio = (ClientPortfolio) service.service(params);
         
         Assertions.assertEquals(clientPortfolio.getUsername(), portfolio.getUsername());
         Assertions.assertEquals(clientPortfolio.getEvaluation(), portfolio.getEvaluation());

@@ -8,10 +8,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.HashMap;
+import java.util.Map;
+
 class BuyServiceTest
 {
     @Mock
-    BuyService service;
+    ClientService service;
     
     @BeforeEach
     public void setup()
@@ -31,10 +34,16 @@ class BuyServiceTest
         String companyName = "nflx";
         String username = "rob.stark@got.com";
         Integer units = 500;
+        Map<String, Object> params = new HashMap<String, Object>()
+        {{
+            put("username", username);
+            put("companyName", companyName);
+            put("units", units);
+        }};
         
-        Mockito.when(service.buy(companyName, username, units)).thenReturn(true);
+        Mockito.when(service.service(params)).thenReturn(true);
         
-        boolean successful = service.buy(companyName, username, units);
+        Boolean successful = (Boolean) service.service(params);
         Assertions.assertTrue(successful);
     }
     

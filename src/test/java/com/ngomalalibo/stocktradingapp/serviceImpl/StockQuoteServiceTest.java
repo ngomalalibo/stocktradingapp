@@ -10,10 +10,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class StockQuoteServiceTest
 {
     @Mock
-    StockQuoteService service;
+    ClientService service;
     
     @BeforeEach
     public void setup()
@@ -31,15 +34,16 @@ public class StockQuoteServiceTest
     void getStock()
     {
         StockQuote stockQuote = new StockQuote("nflx", 500D);
+        Map<String, Object> map = new HashMap<>();
+        map.put("companyname", "nflx");
+        Mockito.when(service.service(map)).thenReturn(stockQuote);
         
-        Mockito.when(service.getStock("nflx")).thenReturn(stockQuote);
-        
-        StockQuote run = service.getStock("nflx");
+        StockQuote run = (StockQuote) service.service(map);
         
         Assertions.assertEquals(run.getSecurityName(), "nflx");
         Assertions.assertEquals(run.getUnitSharePrice(), 500D);
         
-        Mockito.verify(service, Mockito.times(1)).getStock(ArgumentMatchers.anyString());
+        Mockito.verify(service, Mockito.times(1)).service(ArgumentMatchers.anyMap());
     }
     
     

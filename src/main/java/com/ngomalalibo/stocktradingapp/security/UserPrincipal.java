@@ -25,13 +25,10 @@ public class UserPrincipal implements UserDetails
     {
         Set<SimpleGrantedAuthority> grantedAuthorities = new HashSet<>();
         
-        String[] availableRoles = {"USER", "ADMIN", "SUPER_ADMIN"};
-        // List.of(availableRoles).forEach(d -> grantedAuthorities.add(new SimpleGrantedAuthority(PersonRoleType.getDisplayText(d))));
-        for (String role : availableRoles)
-        {
-            grantedAuthorities.add(new SimpleGrantedAuthority(role));
-        }
+        String availableRoles = this.user.getRole();
+        grantedAuthorities.add(new SimpleGrantedAuthority(availableRoles));
         return grantedAuthorities;
+        // List.of(availableRoles).forEach(d -> grantedAuthorities.add(new SimpleGrantedAuthority(PersonRoleType.getDisplayText(d))));
         // return SetUtils.singletonSet(new SimpleGrantedAuthority(this.user.getPersonRoleTypes().displayText()));
         // this.user.getPersonRoleTypes().forEach(d -> grantedAuthorities.add(new SimpleGrantedAuthority(d.displayText())));
     }

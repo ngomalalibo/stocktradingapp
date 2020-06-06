@@ -1,6 +1,7 @@
 package com.ngomalalibo.stocktradingapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ngomalalibo.stocktradingapp.serviceImpl.RegistrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +38,6 @@ class PortfolioControllerTest
     @Test
     void viewStocks_returnsClientPortfolio() throws Exception
     {
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29tYWxhbGlib0B5YWhvby5jb20iLCJwYXNzd29yZCI6IiQyYSQxMSRRM0lVVjlRRVJWWE5JNXgueVVIaDRlOURHVi9YRVBUUFM0bTVCVUJIcWd0VkNRL0g3VWZTbSIsInJvbGVzIjoiVVNFUiIsImlhdCI6MTU5MTI2NTkyNywiZXhwIjoxNTkxMzAxOTI3fQ.T7ckYLfHT1Uzk2OGMNF7KSkmHOpg1HPw1PsnPyCTNCE";
         
         String template = "/portfolio";
         String username = "john.snow@got.com";
@@ -49,7 +49,7 @@ class PortfolioControllerTest
         log.info("portfolioURL -> " + portfolioURL);
         mockMvc.perform(MockMvcRequestBuilders.post(portfolioURL)
                                               .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                              .param("token", token)
+                                              .param("token", RegistrationService.token)
                                               .content(objectMapper.writeValueAsString(request)))
                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                .andExpect(MockMvcResultMatchers.status().isOk())

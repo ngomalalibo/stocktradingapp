@@ -9,10 +9,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.HashMap;
+import java.util.Map;
+
 class RegistrationServiceTest
 {
     @Mock
-    RegistrationService service;
+    ClientService service;
     
     @BeforeEach
     public void setup()
@@ -30,9 +33,13 @@ class RegistrationServiceTest
     void register()
     {
         Client client = new Client("John", "Snow", "john.snow@got.com");
-        Mockito.when(service.register("john.snow@got.com", "1234567890", client)).thenReturn("successful");
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", "john.snow@got.com");
+        params.put("password", "1234567890");
+        params.put("client", client);
+        Mockito.when(service.service(params)).thenReturn("successful");
         
-        String successful = service.register("john.snow@got.com", "1234567890", client);
+        String successful = (String) service.service(params);
         
         Assertions.assertNotNull(successful);
     }

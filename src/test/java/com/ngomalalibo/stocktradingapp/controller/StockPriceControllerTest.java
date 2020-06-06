@@ -2,6 +2,7 @@ package com.ngomalalibo.stocktradingapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ngomalalibo.stocktradingapp.model.StockRequest;
+import com.ngomalalibo.stocktradingapp.serviceImpl.RegistrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,11 +35,10 @@ class StockPriceControllerTest
     {
         StockRequest stockRequest = new StockRequest();
         stockRequest.setCompanyname("Netflix");
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29tYWxhbGlib0B5YWhvby5jb20iLCJwYXNzd29yZCI6IiQyYSQxMSRRM0lVVjlRRVJWWE5JNXgueVVIaDRlOURHVi9YRVBUUFM0bTVCVUJIcWd0VkNRL0g3VWZTbSIsInJvbGVzIjoiVVNFUiIsImlhdCI6MTU5MTI2NTkyNywiZXhwIjoxNTkxMzAxOTI3fQ.T7ckYLfHT1Uzk2OGMNF7KSkmHOpg1HPw1PsnPyCTNCE";
         
         mockMvc.perform(MockMvcRequestBuilders.get("/stockprice/{companyname}", "nflx")
                                               .contentType(MediaType.APPLICATION_JSON)
-                                              .param("token", token)
+                                              .param("token", RegistrationService.token)
                                               .content(objectMapper.writeValueAsString(stockRequest)))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }

@@ -9,10 +9,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.HashMap;
+import java.util.Map;
+
 class SellServiceTest
 {
     @Mock
-    SellService service;
+    ClientService service;
     
     @BeforeEach
     public void setup()
@@ -34,11 +37,16 @@ class SellServiceTest
         String username = "rob.stark@got.com";
         Integer units = 500;
         
-        Mockito.when(service.sell(companyName, username, units)).thenReturn(true);
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", username);
+        params.put("companyname", companyName);
+        params.put("units", units);
         
-        boolean successful = service.sell(companyName, username, units);
+        Mockito.when(service.service(params)).thenReturn(true);
+        
+        boolean successful = (boolean) service.service(params);
         Assertions.assertTrue(successful);
         
-        Mockito.verify(service, Mockito.times(1)).sell(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyInt());
+        Mockito.verify(service, Mockito.times(1)).service(ArgumentMatchers.anyMap());
     }
 }

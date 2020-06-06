@@ -1,7 +1,7 @@
 package com.ngomalalibo.stocktradingapp.serviceImpl;
 
 import com.ngomalalibo.stocktradingapp.entity.User;
-import com.ngomalalibo.stocktradingapp.repository.GenericDataService;
+import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserConfirmation
 {
-    private static GenericDataService userGDS = new GenericDataService(new User());
+    private static GenericDataRepository userGDS = new GenericDataRepository(new User());
     
     
     /**

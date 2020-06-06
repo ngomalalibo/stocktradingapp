@@ -11,7 +11,7 @@ import com.ngomalalibo.stocktradingapp.entity.ClientTransaction;
 import com.ngomalalibo.stocktradingapp.entity.StockQuote;
 import com.ngomalalibo.stocktradingapp.entity.User;
 import com.ngomalalibo.stocktradingapp.exception.CustomNullPointerException;
-import com.ngomalalibo.stocktradingapp.repository.GenericDataService;
+import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,10 +49,10 @@ public class StockQuoteApiClient implements IEXCloudV1RestRequest
     public static String URL_ADD_COMPANY_TOKEN = "https://cloud-sse.iexapis.com/stable/stock/%s/quote?token=%s";
     public static String STOCK_URL = "";
     
-    private static GenericDataService userGDS = new GenericDataService(new User());
-    private static GenericDataService clientGDS = new GenericDataService(new com.ngomalalibo.stocktradingapp.entity.Client());
-    private static GenericDataService clientAccountGDS = new GenericDataService(new ClientAccount());
-    private static GenericDataService transactionsGDS = new GenericDataService(new ClientTransaction());
+    private static GenericDataRepository userGDS = new GenericDataRepository(new User());
+    private static GenericDataRepository clientGDS = new GenericDataRepository(new com.ngomalalibo.stocktradingapp.entity.Client());
+    private static GenericDataRepository clientAccountGDS = new GenericDataRepository(new ClientAccount());
+    private static GenericDataRepository transactionsGDS = new GenericDataRepository(new ClientTransaction());
     
     protected void setCompanyURL(String company)
     {

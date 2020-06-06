@@ -1,9 +1,6 @@
 package com.ngomalalibo.stocktradingapp.serviceImpl;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -11,11 +8,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 class LoginServiceTest
 {
     
     @Mock
-    LoginService service;
+    ClientService service;
     
     @BeforeEach
     public void setup()
@@ -29,6 +29,7 @@ class LoginServiceTest
     
     }
     
+    @Disabled
     @Test
     void login()
     {
@@ -41,10 +42,13 @@ class LoginServiceTest
             }
         };
         
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", "john.snow@got.com");
+        params.put("password", "1234567890");
         
-        Mockito.when(service.login("john.snow@got.com", "1234567890", mgr)).thenReturn(true);
+        Mockito.when(service.service(params)).thenReturn(true);
         
-        boolean successful = service.login("john.snow@got.com", "1234567890", mgr);
+        boolean successful = (boolean) service.service(params);
         
         Assertions.assertTrue(successful);
     }

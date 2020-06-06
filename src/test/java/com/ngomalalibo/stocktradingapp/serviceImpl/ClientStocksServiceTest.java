@@ -9,13 +9,15 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 class ClientStocksServiceTest
 {
     @Mock
-    ClientStocksService service;
+    ClientService service;
     
     @BeforeEach
     public void setup()
@@ -40,16 +42,19 @@ class ClientStocksServiceTest
             add("access");
         }};
         
-        Mockito.when(service.getClientStocks("john.snow@got.com")).thenReturn(stocks);
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", "john.snow@got.com");
         
-        Set<String> securities = service.getClientStocks("john.snow@got.com");
+        Mockito.when(service.service(params)).thenReturn(stocks);
+        
+        Set<String> securities = (Set<String>) service.service(params);
         
         Assertions.assertTrue(securities.contains("dangote"));
         Assertions.assertTrue(securities.contains("nbc"));
         Assertions.assertTrue(securities.contains("fbn"));
         Assertions.assertTrue(securities.contains("access"));
         
-        Mockito.verify(service, Mockito.atLeast(1)).getClientStocks(ArgumentMatchers.anyString());
+        Mockito.verify(service, Mockito.atLeast(1)).service(ArgumentMatchers.anyMap());
         
         
     }

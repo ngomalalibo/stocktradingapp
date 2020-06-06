@@ -1,15 +1,14 @@
 package com.ngomalalibo.stocktradingapp.controller;
 
-import com.ngomalalibo.stocktradingapp.entity.Client;
 import com.ngomalalibo.stocktradingapp.exception.ApiResponse;
 import com.ngomalalibo.stocktradingapp.security.UserPrincipal;
-import com.ngomalalibo.stocktradingapp.serviceImpl.RegistrationService;
+import com.ngomalalibo.stocktradingapp.serviceImpl.ClientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,12 +27,13 @@ public class RegistrationController
     AuthenticationManager authenticationManager;
     
     @Autowired
-    RegistrationService services;
+    @Qualifier("registrationService")
+    ClientService services;
     
     @PostMapping(value = "/registration")
     public ResponseEntity<Object> register(@RequestBody HashMap<String, Object> request)
     {
-        String token = services.register(request.get("user").toString(), request.get("pass").toString(), new Client());
+        String token = (String) services.service(request);
         if (token != null)
         {
             ApiResponse apiResponse = new ApiResponse(HttpStatus.OK, "User has been registered successfully with token " +
@@ -61,16 +61,13 @@ public class RegistrationController
     }*/
     
     @PostMapping("/me")
-    // @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity currentUser(@AuthenticationPrincipal UserPrincipal userDetails)
     {
         if (userDetails != null)
         {
             Map<Object, Object> model = new HashMap<>();
             model.put("username", userDetails.getUsername());
-            model.put("roles", userDetails.getAuthorities()
-                                          .stream()
-                                          .map(GrantedAuthority::getAuthority));
+            model.put("roles", userDetails.getAuthorities());
             return ok(model);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user principal");

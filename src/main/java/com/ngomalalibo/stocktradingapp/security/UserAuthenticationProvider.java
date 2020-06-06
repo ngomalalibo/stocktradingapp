@@ -1,7 +1,7 @@
 package com.ngomalalibo.stocktradingapp.security;
 
 import com.google.common.base.Strings;
-import com.ngomalalibo.stocktradingapp.repository.GenericDataService;
+import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
 import com.ngomalalibo.stocktradingapp.dataprovider.UsersDP;
 import com.ngomalalibo.stocktradingapp.entity.User;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class UserAuthenticationProvider extends DaoAuthenticationProvider
         super();
     }
     
-    private static GenericDataService gds = new GenericDataService(new User());
+    private static GenericDataRepository gds = new GenericDataRepository(new User());
     
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException
