@@ -88,7 +88,7 @@ class RegistrationControllerTest
     @Test
     public void currentUser() throws Exception
     {
-        String template = "/me";
+        String template = "/currentuser";
         
         mockMvc.perform(MockMvcRequestBuilders.post(template)
                                               .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -96,6 +96,7 @@ class RegistrationControllerTest
                                               .characterEncoding("UTF-8"))
                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                .andExpect(MockMvcResultMatchers.jsonPath("$.username", Matchers.equalTo("ngomalalibo@yahoo.com")))
+               .andDo(MockMvcResultHandlers.print())
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

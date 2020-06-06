@@ -60,7 +60,7 @@ public class RegistrationController
                        .orElse(ResponseEntity.badRequest().body(new ApiResponse(HttpStatus.BAD_REQUEST, "User creation failed", HttpStatus.BAD_REQUEST.getReasonPhrase())));
     }*/
     
-    @PostMapping("/me")
+    @PostMapping("/currentuser")
     public ResponseEntity currentUser(@AuthenticationPrincipal UserPrincipal userDetails)
     {
         if (userDetails != null)

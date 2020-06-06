@@ -6,8 +6,9 @@ https://stockportfoliomgr.herokuapp.com/registration (params: user & pass)
 https://stockportfoliomgr.herokuapp.com/transaction (params:  companyname, deposit, transactiontype, username, units, user )
 https://stockportfoliomgr.herokuapp.com/portfolio (param: username)
 https://stockportfoliomgr.herokuapp.com/stockprice/{companyname} eg. nflx for Netflix
+https://stockportfoliomgr.herokuapp.com/me
 
-The Java application is built using the Spring framework. The backend is a NoSQL MongoDB database hosted remotely on Atlas.
+The REST API is built using the Java Spring framework. The database is a NoSQL MongoDB database hosted remotely on Atlas.
 The application retrieves current stock price information from the IEX Cloud service API and uses that information to manage client portfolios in real-time. 
 Clients can fund their accounts, buy & sell securities and view their portfolio details for a selected time period using the /transaction endpoint.
 
