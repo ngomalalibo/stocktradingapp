@@ -7,6 +7,7 @@ import com.ngomalalibo.stocktradingapp.codec.IDPrefixCodec;
 import com.ngomalalibo.stocktradingapp.entity.*;
 import com.ngomalalibo.stocktradingapp.enumeration.IDPrefixes;
 import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
+import com.ngomalalibo.stocktradingapp.util.AppConstants;
 import com.ngomalalibo.stocktradingapp.util.CustomNullChecker;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -76,7 +77,7 @@ public class MongoConnectionImpl implements DatabaseConnection
     {
         final CodecRegistry defaultCodecRegistry = MongoClientSettings.getDefaultCodecRegistry();
         final CodecProvider pojoCodecProvider = PojoCodecProvider.builder()
-                                                                 .register("com.ngomalalibo.stocktradingapp.entity", "com.ngomalalibo.stocktradingapp.enumeration").automatic(true).build();
+                                                                 .register(AppConstants.ENTITY_PACKAGE, AppConstants.ENUMERATION_PACKAGE).automatic(true).build();
         final CodecRegistry cvePojoCodecRegistry = CodecRegistries.fromProviders(pojoCodecProvider);
         final CodecRegistry customEnumCodecs = CodecRegistries.fromCodecs(new IDPrefixCodec());
         return CodecRegistries.fromRegistries(defaultCodecRegistry, customEnumCodecs, cvePojoCodecRegistry);

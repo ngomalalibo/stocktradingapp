@@ -10,6 +10,7 @@ import com.ngomalalibo.stocktradingapp.dataprovider.GetObjectByID;
 import com.ngomalalibo.stocktradingapp.dataprovider.SortProperties;
 import com.ngomalalibo.stocktradingapp.entity.PersistingBaseEntity;
 import com.ngomalalibo.stocktradingapp.exception.CustomNullPointerException;
+import com.ngomalalibo.stocktradingapp.util.AppConstants;
 import com.ngomalalibo.stocktradingapp.util.CustomNullChecker;
 import com.ngomalalibo.stocktradingapp.util.GetCollectionFromEntityName;
 import com.ngomalalibo.stocktradingapp.util.GetEntityNamesFromPackage;
@@ -54,7 +55,7 @@ public class GenericDataRepository
         
         if (!CustomNullChecker.nullObjectChecker(bean))
         {
-            Set<String> entities = GetEntityNamesFromPackage.retrieveEntityNamesFromPackage("com.ngomalalibo.stocktradingapp.entity");
+            Set<String> entities = GetEntityNamesFromPackage.retrieveEntityNamesFromPackage(AppConstants.ENTITY_PACKAGE);
             if (entities.size() <= 0)
             {
                 throw new EntityNotFoundException("Entity not found");
