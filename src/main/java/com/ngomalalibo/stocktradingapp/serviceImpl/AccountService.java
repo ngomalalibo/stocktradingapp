@@ -20,30 +20,6 @@ public class AccountService implements ClientService
     private final GenericDataRepository userGDS = new GenericDataRepository(new User());
     private static GenericDataRepository clientGDS = new GenericDataRepository(new Client());
     private static GenericDataRepository clientAccountGDS = new GenericDataRepository(new ClientAccount());
-
-//    public Double getAccountBalance(String username) throws CustomNullPointerException
-//    {
-//        if (Strings.isNullOrEmpty(username))
-//        {
-//            throw new CustomNullPointerException("Please provide a valid username to get account balance");
-//        }
-//        User user = (User) userGDS.getRecordByEntityProperty("username", username);
-//        if (user == null)
-//        {
-//            throw new CustomNullPointerException("This user does not exist.");
-//        }
-//        Client client = (Client) clientGDS.getRecordByEntityProperty("email", user.getClientID());
-//        if (client != null)
-//        {
-//            ClientAccount ca = (ClientAccount) clientAccountGDS.getRecordByEntityProperty("clientID", client.getClientAccountID());
-//            if (ca != null)
-//            {
-//                return ca.getBalance();
-//            }
-//
-//        }
-//        return null;
-//    }
     
     @Override
     public Object service(Map<String, Object> params) // getAccountBalance

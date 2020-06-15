@@ -26,7 +26,6 @@ public class ConnectionTest
         String url = "mongodb+srv://stocks:stocks@mflix-lfo1z.mongodb.net/test?retryWrites=true&w=majority";
         
         assertEquals(con.getDBSTR(), url);
-        
     }
     
     @Test

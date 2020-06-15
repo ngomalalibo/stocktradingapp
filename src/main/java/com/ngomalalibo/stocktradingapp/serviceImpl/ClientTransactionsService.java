@@ -18,17 +18,6 @@ public class ClientTransactionsService implements ClientService
 {
     private GenericDataRepository transactionsGDS = new GenericDataRepository(new ClientTransaction());
     
-    /*public List<ClientTransaction> getAllClientTransactions(String username)
-    {
-        if (username == null)
-        {
-            throw new CustomNullPointerException("Provide username to view transaction details");
-        }
-        
-        return transactionsGDS.getRecordsByEntityKey // get all transaction for current user with an ascending sort on name
-                ("username", username, Collections.singletonList(new SortProperties("username", true)));
-    }*/
-    
     @Override
     public Object service(Map<String, Object> params)
     {

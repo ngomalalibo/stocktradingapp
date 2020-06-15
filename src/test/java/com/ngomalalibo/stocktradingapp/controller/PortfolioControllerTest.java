@@ -38,7 +38,6 @@ class PortfolioControllerTest
     @Test
     void viewStocks_returnsClientPortfolio() throws Exception
     {
-        
         String template = "/portfolio";
         String username = "john.snow@got.com";
         HashMap<String, Object> request = new HashMap<String, Object>()

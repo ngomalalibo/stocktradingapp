@@ -6,7 +6,6 @@ import com.mongodb.client.*;
 import com.ngomalalibo.stocktradingapp.codec.IDPrefixCodec;
 import com.ngomalalibo.stocktradingapp.entity.*;
 import com.ngomalalibo.stocktradingapp.enumeration.IDPrefixes;
-import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
 import com.ngomalalibo.stocktradingapp.util.AppConstants;
 import com.ngomalalibo.stocktradingapp.util.CustomNullChecker;
 import lombok.Getter;
@@ -26,9 +25,8 @@ import java.util.Map;
 @Slf4j
 @Repository
 @Getter
-public class MongoConnectionImpl implements DatabaseConnection
+public class MongoConnectionImpl implements DatabaseConnection, CollectionEntityMapping
 {
-    
     private final String DBNAME = "stocks";
     private static final String DB_ORGANIZATION = "Stock Trading Inc.";
     private static final String DB_ACTIVITYLOG = "activitylogs";
@@ -43,8 +41,8 @@ public class MongoConnectionImpl implements DatabaseConnection
     // @Value("${spring.data.mongodb.uri}")
     private String DBSTR = System.getenv().get("MONGODB_DATABASE_STOCKS_ATLAS");
     
-    private MongoClient mongo = null;
-    private MongoDatabase db;
+    private static MongoClient mongo = null;
+    private static MongoDatabase db;
     
     public static MongoCollection<ActivityLog> activityLog;
     public static MongoCollection<Client> client;
@@ -91,7 +89,6 @@ public class MongoConnectionImpl implements DatabaseConnection
         log.info("Database url -> " + DBSTR);
         ConnectionString connectionString = new ConnectionString(DBSTR);
         
-        
         MongoClientSettings settings = MongoClientSettings.builder()
                                                           .applyConnectionString(connectionString)
                                                           .retryWrites(true)
@@ -116,11 +113,10 @@ public class MongoConnectionImpl implements DatabaseConnection
         stockQuote = db.getCollection(DB_STOCK, StockQuote.class).withCodecRegistry(pojoCodecRegistry);
         user = db.getCollection(DB_USER, User.class).withCodecRegistry(pojoCodecRegistry);
         
-        
         return db;
     }
     
-    public static void main(String[] args)
+    /*public static void main(String[] args)
     {
         MongoConnectionImpl mongo = new MongoConnectionImpl();
         mongo.startDB();
@@ -128,7 +124,7 @@ public class MongoConnectionImpl implements DatabaseConnection
         User username = (User) use.getRecordByEntityProperty("username", "ngomalalibo@yahoo.com");
         System.out.println("username = " + username);
         mongo.stopDB();
-    }
+    }*/
     
     @Override
     public HashMap<String, MongoCollection> mapCollectionsAndEntities()

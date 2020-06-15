@@ -69,7 +69,6 @@ public class JwtTokenProvider
     
     public boolean validateToken(String token) throws JwtException
     {
-        
         Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
         // remove token expiry.
         /*if (claims.getBody().getExpiration().before(new Date()))

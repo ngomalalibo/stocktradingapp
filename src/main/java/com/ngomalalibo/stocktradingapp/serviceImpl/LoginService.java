@@ -59,28 +59,4 @@ public class LoginService
         return loginStatus;
     }
     
-    
-    /*@PostMapping({"/login", "/"})
-    public ResponseEntity<Object> login(@RequestParam("user") String user, @RequestParam("pass") String pass, AuthenticationManager authenticationManager)
-    {
-        try
-        {
-            boolean successful = services.login(user, pass, authenticationManager);
-            if (successful)
-            {
-                ApiResponse apiResponse = new ApiResponse(HttpStatus.OK, "User has been logged in successfully", HttpStatus.OK.getReasonPhrase());
-                return ResponseEntity.ok(apiResponse);
-            }
-            else
-            {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User login failed");
-            }
-        }
-        catch (AuthenticationException e)
-        {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User NOT created " + e.getMessage());
-        }
-        
-    }*/
-    
 }

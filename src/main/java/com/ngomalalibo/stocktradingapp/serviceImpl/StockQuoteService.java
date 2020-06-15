@@ -15,16 +15,6 @@ import java.util.Map;
 @Service
 public class StockQuoteService implements ClientService
 {
-    /*public StockQuote getStock(String company)
-    {
-        if (company == null)
-        {
-            throw new CustomNullPointerException("Please provide a company name to get its stock price");
-        }
-        return new StockQuoteApiClient().getStock(company);
-    }*/
-    
-    
     @Override
     public Object service(Map<String, Object> params)
     {

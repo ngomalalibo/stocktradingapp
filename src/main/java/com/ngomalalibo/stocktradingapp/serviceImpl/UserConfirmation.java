@@ -13,11 +13,6 @@ public class UserConfirmation
 {
     private static GenericDataRepository userGDS = new GenericDataRepository(new User());
     
-    
-    /**
-     * Utility methods
-     */
-    
     public static boolean exists(String username)
     {
         User user = (User) userGDS.getRecordByEntityProperty("username", username);
