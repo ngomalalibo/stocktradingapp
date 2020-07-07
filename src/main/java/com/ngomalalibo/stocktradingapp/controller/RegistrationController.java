@@ -2,7 +2,7 @@ package com.ngomalalibo.stocktradingapp.controller;
 
 import com.ngomalalibo.stocktradingapp.exception.ApiResponse;
 import com.ngomalalibo.stocktradingapp.security.UserPrincipal;
-import com.ngomalalibo.stocktradingapp.serviceImpl.ClientService;
+import com.ngomalalibo.stocktradingapp.serviceImpl.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,9 +26,9 @@ public class RegistrationController
     @Autowired
     AuthenticationManager authenticationManager;
     
-    @Autowired
     @Qualifier("registrationService")
-    ClientService services;
+    @Autowired
+    TransactionService services;
     
     @PostMapping(value = "/registration")
     public ResponseEntity<Object> register(@RequestBody HashMap<String, Object> request)

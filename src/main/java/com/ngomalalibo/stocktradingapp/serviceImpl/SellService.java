@@ -6,23 +6,38 @@ import com.ngomalalibo.stocktradingapp.enumeration.TransactionType;
 import com.ngomalalibo.stocktradingapp.exception.CustomNullPointerException;
 import com.ngomalalibo.stocktradingapp.exception.InsufficientCaseException;
 import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Service
-@RequiredArgsConstructor
-public class SellService implements ClientService
+public class SellService implements TransactionService
 {
-    private static GenericDataRepository userGDS = new GenericDataRepository(new User());
-    private static GenericDataRepository clientGDS = new GenericDataRepository(new Client());
-    private static GenericDataRepository clientAccountGDS = new GenericDataRepository(new ClientAccount());
+    @Autowired
+    StockQuoteService stockQuoteService;
     
+    @Autowired
+    ClientTransactionsService clientTransactionsService;
+    
+    private static GenericDataRepository userDataRepository;
+    private static GenericDataRepository clientDataRepository;
+    private static GenericDataRepository clientAccountDataRepository;
+    private static GenericDataRepository clientTransactionDataRepository;
+    
+    
+    public SellService(GenericDataRepository userDataRepository,
+                       GenericDataRepository clientDataRepository,
+                       GenericDataRepository clientAccountDataRepository,
+                       GenericDataRepository clientTransactionDataRepository)
+    {
+        this.userDataRepository = userDataRepository;
+        this.clientDataRepository = clientDataRepository;
+        this.clientAccountDataRepository = clientAccountDataRepository;
+        this.clientTransactionDataRepository = clientTransactionDataRepository;
+    }
     
     // sell stock from portfolio
     @Override
@@ -51,7 +66,7 @@ public class SellService implements ClientService
         // get all transactions for this client
         Map<String, Object> req = new HashMap<>();
         req.put("username", username);
-        List<ClientTransaction> clientTransactions = (List<ClientTransaction>) new ClientTransactionsService().service(req);
+        List<ClientTransaction> clientTransactions = (List<ClientTransaction>) clientTransactionsService.service(req);
         
         boolean userHasUnits = false;
         if (clientTransactions.size() > 0)
@@ -70,19 +85,19 @@ public class SellService implements ClientService
         
         // get user account object
         // User user = GetObjectByID.getObjectById(username, Connection.user);
-        User user = (User) userGDS.getRecordByEntityProperty("username", username);  // get object by username
+        User user = (User) userDataRepository.getRecordByEntityProperty("username", username);  // get object by username
         
         if (user != null)
         {
             // retrieve client details from clientID and store details in map embedded inside user object
             // user.getAdditionalProperties().put("client", GetObjectByID.getObjectById(user.getClientID(), Connection.client));
-            user.getAdditionalProperties().put("client", clientGDS.getRecordByEntityProperty("email", user.getClientID()));
+            user.getAdditionalProperties().put("client", clientDataRepository.getRecordByEntityProperty("email", user.getClientID()));
             client = (Client) user.getAdditionalProperties().get("client");
             
             if (client != null)
             {
                 // ClientAccount ca = GetObjectByID.getObjectById(client.getClientAccountID(), Connection.clientAccount);
-                ClientAccount ca = (ClientAccount) clientAccountGDS.getRecordByEntityProperty("clientID", client.getClientAccountID());
+                ClientAccount ca = (ClientAccount) clientAccountDataRepository.getRecordByEntityProperty("clientID", client.getClientAccountID());
                 if (ca != null)
                 {
                     
@@ -91,7 +106,7 @@ public class SellService implements ClientService
                     // get stock price
                     Map<String, Object> request = new HashMap<String, Object>();
                     request.put("companyname", company);
-                    StockQuote stockQuote = (StockQuote) new StockQuoteService().service(request);
+                    StockQuote stockQuote = (StockQuote) stockQuoteService.service(request);
                     
                     if (stockQuote != null)
                     {

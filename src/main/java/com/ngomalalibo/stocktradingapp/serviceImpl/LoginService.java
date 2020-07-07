@@ -1,10 +1,11 @@
 package com.ngomalalibo.stocktradingapp.serviceImpl;
 
-import com.ngomalalibo.stocktradingapp.entity.*;
+import com.ngomalalibo.stocktradingapp.entity.ActivityLog;
+import com.ngomalalibo.stocktradingapp.entity.User;
 import com.ngomalalibo.stocktradingapp.enumeration.ActivityLogType;
 import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,24 +13,25 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class LoginService
 {
-    private static GenericDataRepository userGDS = new GenericDataRepository(new User());
-    private static GenericDataRepository clientGDS = new GenericDataRepository(new Client());
-    private static GenericDataRepository clientAccountGDS = new GenericDataRepository(new ClientAccount());
-    private static GenericDataRepository transactionsGDS = new GenericDataRepository(new ClientTransaction());
+    //@Qualifier("userDataRepository")
+    @Autowired
+    private GenericDataRepository userDataRepository;
+    
     public static boolean loginStatus = false;
     
     // login to application with spring security providing form-based authentication and authorization
     public boolean login(String username, String password, AuthenticationManager authenticationManager) throws AuthenticationException
     {
-        User user = (User) userGDS.getRecordByEntityProperty("username", username);
+        User user = (User) userDataRepository.getRecordByEntityProperty("username", username);
         
         // try to authenticate with given credentials, should always return not null or throw an {@link AuthenticationException}
         log.info("authenticating -> login " + username);

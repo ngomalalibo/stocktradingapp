@@ -20,10 +20,4 @@ public class StocktradingappApplication extends SpringBootServletInitializer
         SpringApplication.run(StocktradingappApplication.class, args);
     }
     
-    /*public static void main(String[] args)
-    {
-        SpringApplication sa = new SpringApplication(
-                StocktradingappApplication.class);
-        sa.run(args);
-    }*/
 }

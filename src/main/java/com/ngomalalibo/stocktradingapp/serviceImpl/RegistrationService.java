@@ -4,25 +4,28 @@ import com.google.common.base.Strings;
 import com.ngomalalibo.stocktradingapp.entity.Client;
 import com.ngomalalibo.stocktradingapp.entity.User;
 import com.ngomalalibo.stocktradingapp.exception.CustomNullPointerException;
+import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
 import com.ngomalalibo.stocktradingapp.security.JwtTokenProvider;
 import com.ngomalalibo.stocktradingapp.security.PasswordEncoder;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.NonUniqueResultException;
 import java.util.Map;
 
-import static com.ngomalalibo.stocktradingapp.serviceImpl.UserConfirmation.exists;
-
 @Slf4j
 @Service
-@RequiredArgsConstructor
-public class RegistrationService implements ClientService
+//@RequiredArgsConstructor
+public class RegistrationService implements TransactionService
 {
-    public static final String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29tYWxhbGlib0B5YWhvby5jb20iLCJwYXNzd29yZCI6IiQyYSQxMSQ1M3lCZU1hR2N5V0g0NktnMzVzaGhlb1lpOEhHMFBwN0p3V0tJQTI3SjJCRm1vUFRwWkt6bSIsInJvbGVzIjoiVVNFUiIsImlhdCI6MTU5MjI2Mzg1NiwiZXhwIjoxNTkyMjk5ODU2fQ.Aa8hQk0u3BDyKjrafzs4bSktWHTXxHpLLdmFd86NSLY";
+    //    public static final String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29tYWxhbGlib0B5YWhvby5jb20iLCJwYXNzd29yZCI6IiQyYSQxMSRWdHNaVDl1Qi5TUlVncWYuU3A0bEh1NFUxbzRDZDdFei9hOElnbi9zNGlvMXMxVGJoSnpvVyIsInJvbGVzIjoiVVNFUiIsImlhdCI6MTU5Mjg2ODI5MX0.gkezGEBJERsbbyjJPA9-2SVgCGimnt7rb7WmRRMTaos";
+    public static final String token = System.getenv().get("STOCK_API_TOKEN");
     
+    @Qualifier("userDataRepository")
+    @Autowired
+    private GenericDataRepository userDataRepository;
     @Autowired
     JwtTokenProvider jwtTokenProvider;
     
@@ -60,5 +63,18 @@ public class RegistrationService implements ClientService
             return token; // user and client creation confirmed
         }
         return null;
+    }
+    
+    public boolean exists(String username)
+    {
+        User user = (User) userDataRepository.getRecordByEntityProperty("username", username);
+        if (user == null)
+        {
+            return false; // user does not exist
+        }
+        else
+        {
+            return true; // user already exists
+        }
     }
 }

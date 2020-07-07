@@ -4,6 +4,9 @@ import com.ngomalalibo.stocktradingapp.entity.ClientTransaction;
 import com.ngomalalibo.stocktradingapp.exception.ApiResponse;
 import com.ngomalalibo.stocktradingapp.factory.TransactionFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +19,12 @@ import java.util.HashMap;
 @RestController
 public class TransactionController
 {
+    @Autowired
+    TransactionFactory transactionFactory;
+    /*@Qualifier("getApplicationContext")
+    @Autowired
+    private ApplicationContext applicationContext;
+    */
     /**
      * @Getter class Pojo {
      * String type;
@@ -42,7 +51,8 @@ public class TransactionController
     @PostMapping("/transaction")
     public ResponseEntity<Object> transaction(@RequestBody HashMap<String, Object> request)
     {
-        ClientTransaction transaction = new TransactionFactory().createTransaction(request);
+        ClientTransaction transaction = transactionFactory.createTransaction(request);
+        // ClientTransaction transaction = applicationContext.getBean(TransactionFactory.class).createTransaction(request);
         if (transaction != null)
         {
             ApiResponse apiResponse = new ApiResponse(HttpStatus.OK, "Transaction completed successfully", HttpStatus.OK.getReasonPhrase());

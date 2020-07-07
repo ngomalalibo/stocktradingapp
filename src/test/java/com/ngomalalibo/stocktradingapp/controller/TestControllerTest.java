@@ -1,7 +1,5 @@
 package com.ngomalalibo.stocktradingapp.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ngomalalibo.stocktradingapp.repository.TestDataInitialization;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.context.WebApplicationContext;
 
 @Slf4j
 @AutoConfigureMockMvc

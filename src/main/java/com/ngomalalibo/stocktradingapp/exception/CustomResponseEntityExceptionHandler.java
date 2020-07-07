@@ -45,7 +45,6 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
                 new ApiResponse(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
         
         return buildResponseEntity(apiResponse);
-        
     }
     
    /* @ExceptionHandler({CustomNullPointerException.class, CustomRuntimeException.class, InsufficientCaseException.class})
@@ -60,6 +59,15 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
     
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex)
+    {
+        ApiResponse apiResponse =
+                new ApiResponse(HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), ex.getMessage());
+        return buildResponseEntity(apiResponse);
+    }
+    
+    @ExceptionHandler(NullPointerException.class)
+    protected ResponseEntity<Object> handleNullPointerExceptionInternal(
+            NullPointerException ex)
     {
         ApiResponse apiResponse =
                 new ApiResponse(HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), ex.getMessage());

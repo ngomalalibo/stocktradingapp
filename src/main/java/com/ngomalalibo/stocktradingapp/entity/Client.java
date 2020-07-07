@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -58,6 +59,5 @@ public class Client extends PersistingBaseEntity
     
     public Client()
     {
-        super();
     }
 }

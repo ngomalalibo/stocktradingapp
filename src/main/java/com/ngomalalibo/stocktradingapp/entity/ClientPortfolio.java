@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -46,6 +49,5 @@ public class ClientPortfolio extends PersistingBaseEntity
     
     public ClientPortfolio()
     {
-        super();
     }
 }

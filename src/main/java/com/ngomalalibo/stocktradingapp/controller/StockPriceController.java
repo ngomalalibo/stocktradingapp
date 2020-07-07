@@ -1,8 +1,7 @@
 package com.ngomalalibo.stocktradingapp.controller;
 
 import com.ngomalalibo.stocktradingapp.entity.StockQuote;
-import com.ngomalalibo.stocktradingapp.serviceImpl.ClientService;
-import com.ngomalalibo.stocktradingapp.serviceImpl.StockQuoteService;
+import com.ngomalalibo.stocktradingapp.serviceImpl.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,7 +23,7 @@ public class StockPriceController
 {
     @Autowired
     @Qualifier("stockQuoteService")
-    ClientService services;
+    TransactionService services;
     
     @GetMapping("/stockprice/{companyname}")
     public ResponseEntity<Object> checkStockPrice(@PathVariable(name = "companyname") String companyname,

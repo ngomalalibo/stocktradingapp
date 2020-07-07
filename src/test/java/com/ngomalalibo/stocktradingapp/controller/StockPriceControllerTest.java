@@ -1,7 +1,6 @@
 package com.ngomalalibo.stocktradingapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ngomalalibo.stocktradingapp.model.StockRequest;
 import com.ngomalalibo.stocktradingapp.serviceImpl.RegistrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,13 +32,9 @@ class StockPriceControllerTest
     @Test
     void getStockPrice() throws Exception
     {
-        StockRequest stockRequest = new StockRequest();
-        stockRequest.setCompanyname("Netflix");
-        
         mockMvc.perform(MockMvcRequestBuilders.get("/stockprice/{companyname}", "nflx")
                                               .contentType(MediaType.APPLICATION_JSON)
-                                              .param("token", RegistrationService.token)
-                                              .content(objectMapper.writeValueAsString(stockRequest)))
+                                              .param("token", RegistrationService.token))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

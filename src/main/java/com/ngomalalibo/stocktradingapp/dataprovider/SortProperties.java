@@ -1,8 +1,10 @@
 package com.ngomalalibo.stocktradingapp.dataprovider;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class SortProperties
 {
     String propertyName;

@@ -5,10 +5,12 @@ import com.ngomalalibo.stocktradingapp.entity.ClientTransaction;
 import com.ngomalalibo.stocktradingapp.exception.ApiResponse;
 import com.ngomalalibo.stocktradingapp.exception.CustomNullPointerException;
 import com.ngomalalibo.stocktradingapp.exception.InsufficientCaseException;
+import com.ngomalalibo.stocktradingapp.serviceImpl.TransactionService;
 import com.ngomalalibo.stocktradingapp.serviceImpl.ClientTransactionsService;
 import com.ngomalalibo.stocktradingapp.serviceImpl.PortfolioService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +27,8 @@ import static org.springframework.http.ResponseEntity.ok;
 public class PortfolioController
 {
     @Autowired
-    PortfolioService services;
+    @Qualifier("portfolio")
+    TransactionService services;
     
     @PostMapping("/portfolio")
     public ResponseEntity<Object> viewStocks(@RequestBody HashMap<String, Object> request)

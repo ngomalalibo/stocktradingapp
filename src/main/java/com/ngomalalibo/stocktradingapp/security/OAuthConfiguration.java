@@ -2,7 +2,7 @@ package com.ngomalalibo.stocktradingapp.security;
 
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+// @Configuration
 public class OAuthConfiguration //extends AuthorizationServerConfigurerAdapter
 {
     /*private BCryptPasswordEncoder bcryptPassEncoder = PasswordEncoder.getPasswordEncoder();

@@ -17,7 +17,7 @@ import java.util.Set;
 class ClientStocksServiceTest
 {
     @Mock
-    ClientService service;
+    TransactionService service;
     
     @BeforeEach
     public void setup()

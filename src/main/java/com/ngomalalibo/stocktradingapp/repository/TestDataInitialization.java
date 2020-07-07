@@ -6,6 +6,7 @@ import com.ngomalalibo.stocktradingapp.enumeration.ActivityLogType;
 import com.ngomalalibo.stocktradingapp.enumeration.ClientTransactionStatus;
 import com.ngomalalibo.stocktradingapp.enumeration.TransactionType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -24,13 +25,16 @@ public class TestDataInitialization
     private StockQuote stockQuote;
     private User user;
     
+    @Autowired
+    private static MongoConnectionImpl database;
+    
     public static void main(String[] args)
     {
-        new MongoConnectionImpl().startDB();
+        database.startDB();
         log.info("initializing database");
         TestDataInitialization init = new TestDataInitialization();
         log.info("Initialization complete");
-        new MongoConnectionImpl().stopDB();
+        database.stopDB();
         
     }
     

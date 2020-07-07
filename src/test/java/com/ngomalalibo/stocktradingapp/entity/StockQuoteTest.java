@@ -3,15 +3,16 @@ package com.ngomalalibo.stocktradingapp.entity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class StockQuoteTest
 {
+    @Autowired
     StockQuote stockQuote;
     
     @BeforeEach
     public void setup()
     {
-        stockQuote = new StockQuote();
     }
     
     @Test

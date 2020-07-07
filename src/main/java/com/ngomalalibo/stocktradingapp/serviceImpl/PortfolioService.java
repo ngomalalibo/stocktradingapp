@@ -6,9 +6,9 @@ import com.ngomalalibo.stocktradingapp.entity.PersistingBaseEntity;
 import com.ngomalalibo.stocktradingapp.entity.StockQuote;
 import com.ngomalalibo.stocktradingapp.enumeration.TransactionType;
 import com.ngomalalibo.stocktradingapp.exception.InsufficientCaseException;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,8 +17,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 // @Slf4j
 @Service
-@RequiredArgsConstructor
-public class PortfolioService implements ClientService
+@Qualifier("portfolio")
+//@RequiredArgsConstructor
+public class PortfolioService implements TransactionService
 {
     Logger log = LoggerFactory.getLogger(PortfolioService.class);
     
@@ -27,7 +28,7 @@ public class PortfolioService implements ClientService
     {
         List<ClientTransaction> allClientTransactions = (List<ClientTransaction>) params.get("allClientTransactions");
         String username = params.get("username").toString();
-        
+    
         ClientPortfolio portfolio = new ClientPortfolio();
         Double totalAmountInvested = 0D;
         AtomicReference<Double> totalValueOfPortfolio = new AtomicReference<>(0D);
@@ -64,7 +65,7 @@ public class PortfolioService implements ClientService
                                                                                        .filter(trans -> stock.equals(trans.getStockQuote().getSecurityName())) // get transactions for current stock
                                                                                        .map(ClientTransaction::getNoOfUnits).reduce(Integer::sum).orElse(0); // get no of units
                 
-                                              req.replace("companyname", stock);
+                                              req.putIfAbsent("companyname", stock);
                                               StockQuote stockQuote1 = (StockQuote) new StockQuoteService().service(req);// get current price of stock
                                               if (stockQuote1 != null)
                                               {

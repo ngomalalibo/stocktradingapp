@@ -16,7 +16,7 @@ import java.util.Map;
 public class StockQuoteServiceTest
 {
     @Mock
-    ClientService service;
+    TransactionService service;
     
     @BeforeEach
     public void setup()

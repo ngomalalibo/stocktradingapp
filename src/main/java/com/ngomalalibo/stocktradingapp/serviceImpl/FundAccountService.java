@@ -11,18 +11,32 @@ import com.ngomalalibo.stocktradingapp.exception.CustomNullPointerException;
 import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Slf4j
-@Service
-@RequiredArgsConstructor
-public class FundAccountService implements ClientService
+public class FundAccountService implements TransactionService
 {
-    private static GenericDataRepository userGDS = new GenericDataRepository(new User());
-    private static GenericDataRepository clientGDS = new GenericDataRepository(new Client());
-    private static GenericDataRepository clientAccountGDS = new GenericDataRepository(new ClientAccount());
+    private GenericDataRepository userDataRepository;
+    private GenericDataRepository clientDataRepository;
+    private GenericDataRepository clientAccountDataRepository;
+    
+    
+    public FundAccountService(GenericDataRepository userDataRepository,
+                              GenericDataRepository clientDataRepository,
+                              GenericDataRepository clientAccountDataRepository)
+    {
+        this.userDataRepository = userDataRepository;
+        this.clientDataRepository = clientDataRepository;
+        this.clientAccountDataRepository = clientAccountDataRepository;
+    }
+    
+    /*public FundAccountService()
+    {
+        userDataRepository = new UserDataRepository(new User());
+        clientDataRepository = new ClientDataRepository(new Client());
+        clientAccountDataRepository = new ClientAccountDataRepository(new ClientAccount());
+    }*/
     
     // method to fund client account
     @Override
@@ -36,15 +50,15 @@ public class FundAccountService implements ClientService
         {
             throw new CustomNullPointerException("Please provide a valid username to fund account");
         }
-        User user = (User) userGDS.getRecordByEntityProperty("username", username);
+        User user = (User) userDataRepository.getRecordByEntityProperty("username", username);
         if (user == null)
         {
             throw new CustomNullPointerException("This user does not exist. No account to fund");
         }
-        Client client = (Client) clientGDS.getRecordByEntityProperty("email", user.getClientID());
+        Client client = (Client) clientDataRepository.getRecordByEntityProperty("email", user.getClientID());
         if (client != null)
         {
-            ClientAccount clientAccount = (ClientAccount) clientAccountGDS.getRecordByEntityProperty("clientID", client.getClientAccountID()); // get balance
+            ClientAccount clientAccount = (ClientAccount) clientAccountDataRepository.getRecordByEntityProperty("clientID", client.getClientAccountID()); // get balance
             if (clientAccount != null)
             {
                 Double balance = clientAccount.getBalance();

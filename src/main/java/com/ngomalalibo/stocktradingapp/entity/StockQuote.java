@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.springframework.format.annotation.NumberFormat;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
@@ -29,7 +30,6 @@ public class StockQuote extends PersistingBaseEntity
     
     public StockQuote()
     {
-        super();
     }
     
     public StockQuote(String securityName, Double unitSharePrice)

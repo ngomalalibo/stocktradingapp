@@ -1,22 +1,25 @@
 package com.ngomalalibo.stocktradingapp.repository;
 
+import com.mongodb.client.MongoDatabase;
+import com.ngomalalibo.stocktradingapp.database.DatabaseConnection;
 import com.ngomalalibo.stocktradingapp.database.MongoConnectionImpl;
 import org.bson.Document;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConnectionTest
 {
+    @Autowired
     MongoConnectionImpl con;
     
     @BeforeEach
     public void setup()
     {
         MockitoAnnotations.initMocks(this);
-        con = new MongoConnectionImpl();
         
     }
     
@@ -31,7 +34,7 @@ public class ConnectionTest
     @Test
     public void testDBStartup()
     {
-        assertEquals(con.getDBNAME(), con.startDB().getName());
+        assertEquals(con.getDBNAME(), ((MongoDatabase) con.startDB()).getName());
     }
     
     @Test

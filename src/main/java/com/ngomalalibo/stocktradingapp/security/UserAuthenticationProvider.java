@@ -1,10 +1,11 @@
 package com.ngomalalibo.stocktradingapp.security;
 
 import com.google.common.base.Strings;
-import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
 import com.ngomalalibo.stocktradingapp.dataprovider.UsersDP;
 import com.ngomalalibo.stocktradingapp.entity.User;
+import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -25,7 +26,8 @@ public class UserAuthenticationProvider extends DaoAuthenticationProvider
         super();
     }
     
-    private static GenericDataRepository gds = new GenericDataRepository(new User());
+    @Autowired
+    private GenericDataRepository userDataRepository;
     
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException
@@ -43,7 +45,7 @@ public class UserAuthenticationProvider extends DaoAuthenticationProvider
             throw new BadCredentialsException("Invalid username or password.");
         }
         
-        User usere = (User) gds.getRecordByEntityProperty("username", username);
+        User usere = (User) userDataRepository.getRecordByEntityProperty("username", username);
         
         if (usere == null)
         {
@@ -89,6 +91,6 @@ public class UserAuthenticationProvider extends DaoAuthenticationProvider
     @Override
     public void setUserDetailsService(UserDetailsService userDetailsService)
     {
-        super.setUserDetailsService(new UsersDP());
+        super.setUserDetailsService(new UsersDP(userDataRepository));
     }
 }

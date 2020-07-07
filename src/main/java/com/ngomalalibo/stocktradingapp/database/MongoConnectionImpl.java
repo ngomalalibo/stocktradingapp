@@ -16,33 +16,34 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.glassfish.jersey.internal.guava.Iterators;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
 @Slf4j
-@Repository
 @Getter
-public class MongoConnectionImpl implements DatabaseConnection, CollectionEntityMapping
+@Component
+public class MongoConnectionImpl implements CollectionEntityMapping
 {
-    private final String DBNAME = "stocks";
-    private static final String DB_ORGANIZATION = "Stock Trading Inc.";
-    private static final String DB_ACTIVITYLOG = "activitylogs";
-    private static final String DB_CLIENT = "clients";
-    private static final String DB_CLIENT_ACCOUNT = "account";
-    private static final String DB_CLIENT_PORTFOLIO = "portfolios";
-    private static final String DB_CLIENT_TRANSACTION = "transactions";
-    private static final String DB_NOTE = "notes";
-    private static final String DB_STOCK = "stocks";
-    private static final String DB_USER = "users";
+    
+    protected final String DBNAME = "stocks";
+    protected static final String DB_ORGANIZATION = "Stock Trading Inc.";
+    protected static final String DB_ACTIVITYLOG = "activitylogs";
+    protected static final String DB_CLIENT = "clients";
+    protected static final String DB_CLIENT_ACCOUNT = "account";
+    protected static final String DB_CLIENT_PORTFOLIO = "portfolios";
+    protected static final String DB_CLIENT_TRANSACTION = "transactions";
+    protected static final String DB_NOTE = "notes";
+    protected static final String DB_STOCK = "stocks";
+    protected static final String DB_USER = "users";
     
     // @Value("${spring.data.mongodb.uri}")
-    private String DBSTR = System.getenv().get("MONGODB_DATABASE_STOCKS_ATLAS");
+    protected String DBSTR = System.getenv().get("MONGODB_DATABASE_STOCKS_ATLAS");
     
-    private static MongoClient mongo = null;
-    private static MongoDatabase db;
+    protected static MongoClient mongo = null;
+    protected static MongoDatabase db;
     
     public static MongoCollection<ActivityLog> activityLog;
     public static MongoCollection<Client> client;
@@ -81,7 +82,6 @@ public class MongoConnectionImpl implements DatabaseConnection, CollectionEntity
         return CodecRegistries.fromRegistries(defaultCodecRegistry, customEnumCodecs, cvePojoCodecRegistry);
     }
     
-    @Override
     public MongoDatabase startDB()
     {
         log.warn("---------------------------- Starting Database");
@@ -146,14 +146,13 @@ public class MongoConnectionImpl implements DatabaseConnection, CollectionEntity
     {
         return new HashMap<String, PersistingBaseEntity>()
         {{
-            put("ActivityLog", new ActivityLog());
+            put("ActivityLog", new User());
             put("Client", new Client());
             put("ClientAccount", new ClientAccount());
             put("ClientPortFolio", new ClientPortfolio());
             put("ClientTransaction", new ClientTransaction());
             put("StockQuote", new StockQuote());
             put("User", new User());
-            
         }};
     }
     
@@ -189,7 +188,6 @@ public class MongoConnectionImpl implements DatabaseConnection, CollectionEntity
         }};
     }
     
-    @Override
     public void stopDB()
     {
         log.warn("---------------------------- Stopping Database");
@@ -224,7 +222,6 @@ public class MongoConnectionImpl implements DatabaseConnection, CollectionEntity
         log.info(" -> contextDestroyed");
         stopDB();
     }*/
-    @Override
     public MongoDatabase getDBConnection()
     {
         DBSTR = System.getenv().get("MONGODB_DATABASE_STOCKS_ATLAS");
@@ -236,7 +233,6 @@ public class MongoConnectionImpl implements DatabaseConnection, CollectionEntity
         return db;
     }
     
-    @Override
     public Document getDBStats()
     {
         MongoDatabase ds = getDBConnection();
@@ -246,7 +242,6 @@ public class MongoConnectionImpl implements DatabaseConnection, CollectionEntity
         return stats;
     }
     
-    @Override
     public int createAllCollections()
     {
         log.warn("---------------------------- Creating Collections");
@@ -276,7 +271,6 @@ public class MongoConnectionImpl implements DatabaseConnection, CollectionEntity
         return Iterators.size(db.listCollections().iterator());
     }
     
-    @Override
     public void createCollection(HashSet<String> hash, String collection)
     {
         if (!hash.contains(collection))

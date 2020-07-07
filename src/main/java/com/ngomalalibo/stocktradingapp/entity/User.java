@@ -25,7 +25,6 @@ public class User extends PersistingBaseEntity
     
     public User()
     {
-        super();
     }
     
     public User(String username, String password, String role, String clientID)

@@ -33,17 +33,6 @@ public class Connection
     public static MongoCollection<StockQuote> stockQuote;
     public static MongoCollection<User> user;
     
-    public static CodecRegistry getCodecRegistry()
-    {
-        final CodecRegistry defaultCodecRegistry = MongoClientSettings.getDefaultCodecRegistry();
-        final CodecProvider pojoCodecProvider = PojoCodecProvider.builder()
-                                                                 .register("com.pc.weblibrarian.entities", "com.pc.weblibrarian.enums").automatic(true).build();
-        final CodecRegistry cvePojoCodecRegistry = CodecRegistries.fromProviders(pojoCodecProvider);
-        final CodecRegistry customEnumCodecs = CodecRegistries.fromCodecs(new IDPrefixCodec());
-        return CodecRegistries.fromRegistries(defaultCodecRegistry, customEnumCodecs, cvePojoCodecRegistry);
-    }
-    
-    
     public static MongoDatabase startDB()
     {
         log.warn("---------------------------- Starting Database");
@@ -68,7 +57,6 @@ public class Connection
             //getDBStats();
         }
         
-        
         activityLog = db.getCollection(DB_ACTIVITYLOG, ActivityLog.class).withCodecRegistry(pojoCodecRegistry);
         client = db.getCollection(DB_CLIENT, Client.class).withCodecRegistry(pojoCodecRegistry);
         clientAccount = db.getCollection(DB_CLIENT_ACCOUNT, ClientAccount.class).withCodecRegistry(pojoCodecRegistry);
@@ -76,7 +64,6 @@ public class Connection
         transaction = db.getCollection(DB_CLIENT_TRANSACTION, ClientTransaction.class).withCodecRegistry(pojoCodecRegistry);
         stockQuote = db.getCollection(DB_STOCK, StockQuote.class).withCodecRegistry(pojoCodecRegistry);
         user = db.getCollection(DB_USER, User.class).withCodecRegistry(pojoCodecRegistry);
-        
         
         return db;
     }
@@ -140,7 +127,6 @@ public class Connection
             put(IDPrefixes.User, Connection.user);
         }};
     }
-    
     
     public static void stopDB()
     {

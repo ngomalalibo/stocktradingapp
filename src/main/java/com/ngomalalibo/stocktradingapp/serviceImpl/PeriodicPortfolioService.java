@@ -3,7 +3,6 @@ package com.ngomalalibo.stocktradingapp.serviceImpl;
 import com.ngomalalibo.stocktradingapp.entity.ClientPortfolio;
 import com.ngomalalibo.stocktradingapp.entity.ClientTransaction;
 import com.ngomalalibo.stocktradingapp.exception.InsufficientCaseException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +14,8 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
-public class PeriodicPortfolioService implements ClientService
+//@RequiredArgsConstructor
+public class PeriodicPortfolioService implements TransactionService
 {
     @Override
     public Object service(Map<String, Object> params)

@@ -2,7 +2,7 @@ package com.ngomalalibo.stocktradingapp.enumeration;
 
 public enum IDPrefixes
 {
-    ActivityLog, Client, ClientAccount, ClientPortfolio, ClientTransaction, StockQuote, Transaction, User;
+    ActivityLog, Client, ClientAccount, ClientPortfolio, ClientTransaction, StockQuote, Transaction, User, PersistingBaseEntity;
     
     public static String getDisplayText(IDPrefixes idPrefix)
     {
@@ -24,7 +24,7 @@ public enum IDPrefixes
                 return "TR";
             case User:
                 return "USR";
-            
+            case PersistingBaseEntity:
             default:
                 return "";
         }
@@ -53,7 +53,7 @@ public enum IDPrefixes
                 return IDPrefixes.getDisplayText(IDPrefixes.Transaction);
             case User:
                 return IDPrefixes.getDisplayText(IDPrefixes.User);
-            
+            case PersistingBaseEntity:
             default:
                 return "";
         }

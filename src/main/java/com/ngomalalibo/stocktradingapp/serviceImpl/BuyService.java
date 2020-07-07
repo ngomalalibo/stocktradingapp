@@ -7,9 +7,8 @@ import com.ngomalalibo.stocktradingapp.enumeration.TransactionType;
 import com.ngomalalibo.stocktradingapp.exception.CustomNullPointerException;
 import com.ngomalalibo.stocktradingapp.exception.InsufficientCaseException;
 import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,19 +16,32 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Service
-@RequiredArgsConstructor
-public class BuyService implements ClientService
+public class BuyService implements TransactionService
 {
-    private static GenericDataRepository userGDS = new GenericDataRepository(new User());
-    private static GenericDataRepository clientGDS = new GenericDataRepository(new Client());
-    private static GenericDataRepository clientAccountGDS = new GenericDataRepository(new ClientAccount());
-    private static GenericDataRepository transactionsGDS = new GenericDataRepository(new ClientTransaction());
+    @Autowired
+    StockQuoteService stockQuoteService;
+    
+    private final GenericDataRepository userDataRepository;
+    private final GenericDataRepository clientDataRepository;
+    private final GenericDataRepository clientAccountDataRepository;
+    private final GenericDataRepository clientTransactionDataRepository;
+    
+    public BuyService(GenericDataRepository userDataRepository,
+                      GenericDataRepository clientDataRepository,
+                      GenericDataRepository clientAccountDataRepository,
+                      GenericDataRepository clientTransactionDataRepository)
+    {
+        this.userDataRepository = userDataRepository;
+        this.clientDataRepository = clientDataRepository;
+        this.clientAccountDataRepository = clientAccountDataRepository;
+        this.clientTransactionDataRepository = clientTransactionDataRepository;
+    }
     
     // buy stock
     @Override
     public Object service(Map<String, Object> params)
     {
+        
         String username = params.get("username").toString();
         String company = params.get("companyname").toString();
         int units = Integer.parseInt(params.get("units").toString());
@@ -51,7 +63,7 @@ public class BuyService implements ClientService
         Double cost = 0D;
         
         // get all transactions for this client
-        List<ClientTransaction> clientTransactions = transactionsGDS.getRecordsByEntityKey
+        List<ClientTransaction> clientTransactions = clientTransactionDataRepository.getRecordsByEntityKey
                 ("username", username, Collections.singletonList(new SortProperties("username", true)));
         
         boolean userHasUnits = false;
@@ -66,13 +78,13 @@ public class BuyService implements ClientService
         
         // get user account object
         // User user = GetObjectByID.getObjectById(username, Connection.user);
-        User user = (User) userGDS.getRecordByEntityProperty("username", username);
+        User user = (User) userDataRepository.getRecordByEntityProperty("username", username);
         
         if (user != null)
         {
             // store user client details in map
             // user.getAdditionalProperties().put("client", GetObjectByID.getObjectById(user.getClientID(), Connection.client));
-            user.getAdditionalProperties().put("client", (Client) clientGDS.getRecordByEntityProperty("email", user.getClientID()));
+            user.getAdditionalProperties().put("client", (Client) clientDataRepository.getRecordByEntityProperty("email", user.getClientID()));
             
         }
         
@@ -80,13 +92,13 @@ public class BuyService implements ClientService
         if (client != null)
         {
             // ClientAccount clientAccount = GetObjectByID.getObjectById(client.getClientAccountID(), Connection.clientAccount);
-            ClientAccount clientAccount = (ClientAccount) clientAccountGDS.getRecordByEntityProperty("clientID", client.getClientAccountID());
+            ClientAccount clientAccount = (ClientAccount) clientAccountDataRepository.getRecordByEntityProperty("clientID", client.getClientAccountID());
             if (clientAccount != null)
             {
                 balance = clientAccount.getBalance();
                 Map<String, Object> req = new HashMap<String, Object>();
                 req.put("companyname", company);
-                StockQuote stockQuote = (StockQuote) new StockQuoteService().service(req); // get company stock
+                StockQuote stockQuote = (StockQuote) stockQuoteService.service(req); // get company stock
                 if (stockQuote != null)
                 {
                     stockPrice = stockQuote.getUnitSharePrice(); // get current stock price of company equity
@@ -116,8 +128,8 @@ public class BuyService implements ClientService
                     clientAccount.setPreviousBalance(clientAccount.getBalance());
                     clientAccount.setBalance(balance);
                     
-                    ClientAccount returnedClientAccount = clientAccount.replaceEntity(clientAccount, clientAccount);// update balance. replaceEntity takes a records with the same ID and replaces the one in the database one with the other
-                    if (returnedClientAccount != null)
+                    clientAccount = clientAccount.replaceEntity(clientAccount, clientAccount);// update balance. replaceEntity takes a records with the same ID and replaces the one in the database one with the other
+                    if (clientAccount != null)
                     {
                         buy.save(buy); // persist new transaction
                         return buy;

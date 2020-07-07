@@ -1,13 +1,14 @@
 package com.ngomalalibo.stocktradingapp.security;
 
 import com.ngomalalibo.stocktradingapp.dataprovider.UsersDP;
+import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -19,7 +20,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter
 {
     private static final String LOGIN_PROCESSING_URL = "/login";
@@ -30,6 +30,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     @Autowired
     JwtTokenProvider jwtTokenProvider;
     
+    @Qualifier("userDataRepository")
+    @Autowired
+    private GenericDataRepository userDataRepository;
     
     @Override
     protected void configure(HttpSecurity http) throws Exception
@@ -114,7 +117,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         }
         ;
         return new InMemoryUserDetailsManager(users);*/
-        return new UsersDP();
+        return new UsersDP(userDataRepository);
         
     }
     

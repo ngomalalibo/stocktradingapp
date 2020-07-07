@@ -6,14 +6,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.ngomalalibo.stocktradingapp.entity.ClientAccount;
-import com.ngomalalibo.stocktradingapp.entity.ClientTransaction;
 import com.ngomalalibo.stocktradingapp.entity.StockQuote;
-import com.ngomalalibo.stocktradingapp.entity.User;
 import com.ngomalalibo.stocktradingapp.exception.CustomNullPointerException;
-import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pl.zankowski.iextrading4j.api.stocks.Quote;
 import pl.zankowski.iextrading4j.client.IEXCloudClient;
@@ -38,7 +33,7 @@ import java.net.URLConnection;
 
 @Data
 @Slf4j
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class StockQuoteApiClient implements IEXCloudV1RestRequest
 {
     private static Client client;
@@ -48,11 +43,6 @@ public class StockQuoteApiClient implements IEXCloudV1RestRequest
     public static String PUBLISHABLE_STOCK_API_KEY = System.getenv().get("PUBLISHABLE_STOCK_API_KEY");
     public static String URL_ADD_COMPANY_TOKEN = "https://cloud-sse.iexapis.com/stable/stock/%s/quote?token=%s";
     public static String STOCK_URL = "";
-    
-    private static GenericDataRepository userGDS = new GenericDataRepository(new User());
-    private static GenericDataRepository clientGDS = new GenericDataRepository(new com.ngomalalibo.stocktradingapp.entity.Client());
-    private static GenericDataRepository clientAccountGDS = new GenericDataRepository(new ClientAccount());
-    private static GenericDataRepository transactionsGDS = new GenericDataRepository(new ClientTransaction());
     
     protected void setCompanyURL(String company)
     {
@@ -105,7 +95,7 @@ public class StockQuoteApiClient implements IEXCloudV1RestRequest
                     // log.info("....");
                     JsonElement je = jp.parse(output);
                     String prettyJsonResponse = gson.toJson(je);
-                    log.info("output -> \n" + prettyJsonResponse);
+                    // log.info("output -> \n" + prettyJsonResponse);
                     
                     ObjectMapper objectMapper = new ObjectMapper();
                     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -113,7 +103,6 @@ public class StockQuoteApiClient implements IEXCloudV1RestRequest
                     objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
                     
                     return objectMapper.readValue(output, StockQuote.class);
-                    
                 }
             }
         }

@@ -1,21 +1,30 @@
 package com.ngomalalibo.stocktradingapp.database;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.ngomalalibo.stocktradingapp.entity.*;
+import lombok.Getter;
 import org.bson.Document;
 
 import java.util.HashSet;
 
-
-public interface DatabaseConnection
+@Getter
+public class DatabaseConnection
 {
-    void createCollection(HashSet<String> hash, String collection);
     
-    Object startDB();
     
-    void stopDB();
+    /*public abstract void createCollection(HashSet<String> hash, String collection);
     
-    Object getDBConnection();
+    public abstract Object startDB();
     
-    int createAllCollections();
+    public abstract void stopDB();
     
-    Document getDBStats();
+    public abstract Object getDBConnection();
+    
+    public abstract int createAllCollections();
+    
+    public abstract Document getDBStats();
+    
+    public abstract <T extends PersistingBaseEntity> MongoCollection getPersistingCollectionFromClass(T t);*/
 }

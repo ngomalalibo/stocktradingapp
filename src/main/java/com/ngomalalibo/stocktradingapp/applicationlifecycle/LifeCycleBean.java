@@ -4,8 +4,6 @@ import com.ngomalalibo.stocktradingapp.database.MongoConnectionImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.*;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.ContextStoppedEvent;
 import org.springframework.context.event.EventListener;
@@ -15,14 +13,16 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 
+@Slf4j
 @Component
-@Slf4j(topic = "WebLib")
 public class LifeCycleBean implements InitializingBean, DisposableBean, BeanNameAware,
-        BeanFactoryAware, ApplicationContextAware
+        BeanFactoryAware
 {
+    private MongoConnectionImpl database = new MongoConnectionImpl();
+    
     public LifeCycleBean()
     {
-        new MongoConnectionImpl().startDB();
+        database.startDB();
         log.info("## I'm in the LifeCycleBean Constructor");
     }
     
@@ -30,7 +30,7 @@ public class LifeCycleBean implements InitializingBean, DisposableBean, BeanName
     public void destroy() throws Exception
     {
         log.info("## The Lifecycle bean has been terminated");
-        new MongoConnectionImpl().stopDB();
+        database.stopDB();
         
     }
     
@@ -54,22 +54,18 @@ public class LifeCycleBean implements InitializingBean, DisposableBean, BeanName
         
     }
     
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
-    {
-        log.info("## Application context has been set");
-    }
-    
+    //Bean specific
     @PostConstruct
     public void postConstruct()
     {
-        log.info("## The Post Construct annotated method has been called");
+        log.info("## Bean Post Construct method has been called");
     }
     
+    //Bean specific
     @PreDestroy
     public void preDestroy()
     {
-        log.info("## The Predestroy annotated method has been called");
+        log.info("## Bean Pre destroy method has been called");
     }
     
     public void beforeInit()

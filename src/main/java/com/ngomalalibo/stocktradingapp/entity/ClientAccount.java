@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +22,6 @@ public class ClientAccount extends PersistingBaseEntity
     
     public ClientAccount()
     {
-        super();
     }
     
     public ClientAccount(Double balance, Double previousBalance, String clientID)

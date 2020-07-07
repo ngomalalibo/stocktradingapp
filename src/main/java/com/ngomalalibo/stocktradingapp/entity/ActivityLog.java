@@ -3,6 +3,7 @@ package com.ngomalalibo.stocktradingapp.entity;
 import com.ngomalalibo.stocktradingapp.enumeration.ActivityLogType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.stereotype.Component;
 
 //@Entity(value = MDB.DB_ACTIVITYLOG, noClassnameStored = true)
 @Data
@@ -23,7 +24,7 @@ public class ActivityLog extends PersistingBaseEntity
     
     public ActivityLog(String user, String eventName, String eventDescription, ActivityLogType activityLogType, String entity)
     {
-        super.prepersist(this);
+        super();
         this.user = user;
         this.eventName = eventName;
         this.eventDescription = eventDescription;
@@ -33,6 +34,5 @@ public class ActivityLog extends PersistingBaseEntity
     
     public ActivityLog()
     {
-        super();
     }
 }

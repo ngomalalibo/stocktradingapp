@@ -18,9 +18,9 @@ import java.util.Date;
 public class JwtTokenProvider
 {
     @Value("${security.jwt.token.secret-key:secret}")
-    private static String secretKey = "secret";
+    private String secretKey = "secret";
     @Value("${security.jwt.token.expire-length:3600000}")
-    private static long validityInMilliseconds = 36000000; // 10hrs
+    private Long validityInMilliseconds = 36000000L; // 10hrs
     
     @Autowired
     private UsersDP userDetailsService;
@@ -41,7 +41,7 @@ public class JwtTokenProvider
         return Jwts.builder()//
                    .setClaims(claims)//
                    .setIssuedAt(now)//
-                   .setExpiration(validity)//
+//                   .setExpiration(validity)//
                    .signWith(SignatureAlgorithm.HS256, secretKey)//
                    .compact();
     }
@@ -52,7 +52,7 @@ public class JwtTokenProvider
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
     
-    public static String getUsername(String token)
+    public String getUsername(String token)
     {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }

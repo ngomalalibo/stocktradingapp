@@ -15,7 +15,7 @@ class LoginServiceTest
 {
     
     @Mock
-    ClientService service;
+    TransactionService service;
     
     @BeforeEach
     public void setup()

@@ -6,6 +6,8 @@ import com.ngomalalibo.stocktradingapp.enumeration.TransactionType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -22,7 +24,9 @@ public class ClientTransaction extends PersistingBaseEntity
     private TransactionType transactionType; // buy/sell
     @Min(value = 1, message = "No of units cannot be less than 1")
     private int noOfUnits;
-    private StockQuote stockQuote = new StockQuote();
+    
+    @Autowired
+    private StockQuote stockQuote;
     private Double transactionAmount;
     
     @NotNull
@@ -46,6 +50,5 @@ public class ClientTransaction extends PersistingBaseEntity
     
     public ClientTransaction()
     {
-        super();
     }
 }
