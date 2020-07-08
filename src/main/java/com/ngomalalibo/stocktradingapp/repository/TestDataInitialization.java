@@ -26,13 +26,16 @@ public class TestDataInitialization
     private User user;
     
     @Autowired
+    PersistingBaseEntity persistingBaseEntity;
+    
+    @Autowired
     private static MongoConnectionImpl database;
     
     public static void main(String[] args)
     {
         database.startDB();
         log.info("initializing database");
-        TestDataInitialization init = new TestDataInitialization();
+        new TestDataInitialization();
         log.info("Initialization complete");
         database.stopDB();
         
@@ -65,25 +68,25 @@ public class TestDataInitialization
     private void initializeDB()
     {
         ActivityLog activityLog = initializeActivityLog();
-        activityLog.save(activityLog);
+        persistingBaseEntity.save(activityLog);
         
         Client client = initializeClient();
-        client.save(client);
+        persistingBaseEntity.save(client);
         
         ClientAccount clientAccount = initializeClientAccount();
-        clientAccount.save(clientAccount);
+        persistingBaseEntity.save(clientAccount);
         
         ClientPortfolio clientPortFolio = initializePortfolio();
-        clientPortFolio.save(clientPortFolio);
+        persistingBaseEntity.save(clientPortFolio);
         
         ClientTransaction clientTransaction = initializeClientTransaction();
-        clientTransaction.save(clientTransaction);
+        persistingBaseEntity.save(clientTransaction);
         
         StockQuote stockQuote = initializeStock();
-        stockQuote.save(stockQuote);
+        persistingBaseEntity.save(stockQuote);
         
         User user = initializeUser();
-        user.save(user);
+        persistingBaseEntity.save(user);
     }
     
     public User initializeUser()

@@ -19,8 +19,13 @@ import org.springframework.context.annotation.Configuration;
 public class LoggingAspect
 {
     
-    @Autowired
     private MongoConnectionImpl database;
+    
+    @Autowired
+    public LoggingAspect(MongoConnectionImpl database)
+    {
+        this.database = database;
+    }
     
     MongoCollection logCollection;
     

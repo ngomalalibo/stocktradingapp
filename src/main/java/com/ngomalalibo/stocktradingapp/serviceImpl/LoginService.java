@@ -1,8 +1,7 @@
 package com.ngomalalibo.stocktradingapp.serviceImpl;
 
-import com.ngomalalibo.stocktradingapp.entity.ActivityLog;
+import com.ngomalalibo.stocktradingapp.aspect.Loggable;
 import com.ngomalalibo.stocktradingapp.entity.User;
-import com.ngomalalibo.stocktradingapp.enumeration.ActivityLogType;
 import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Service
@@ -28,7 +23,8 @@ public class LoginService
     
     public static boolean loginStatus = false;
     
-    // login to application with spring security providing form-based authentication and authorization
+    // login to application with spring security providing form-based authentication and authorization. Logged via pointcut @Loggable
+    @Loggable
     public boolean login(String username, String password, AuthenticationManager authenticationManager) throws AuthenticationException
     {
         User user = (User) userDataRepository.getRecordByEntityProperty("username", username);
@@ -44,15 +40,6 @@ public class LoginService
         {
             log.info("user roles -> " + user.getRole());
         }
-        
-        // log access activity
-        ActivityLog alog = new ActivityLog();
-        alog.setUser(username);
-        alog.setActivityLogType(ActivityLogType.INFO);
-        alog.setEventName("LOGIN");
-        alog.setEventDescription("logged in at "
-                                         + LocalDateTime.now().format(DateTimeFormatter.ofPattern("d MMMM, yyyy 'at' h:mm a")));
-        alog.save(alog); // persist
         
         loginStatus = true; // set login status to true
         

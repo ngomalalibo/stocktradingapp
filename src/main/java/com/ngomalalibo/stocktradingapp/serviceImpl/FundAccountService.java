@@ -1,16 +1,13 @@
 package com.ngomalalibo.stocktradingapp.serviceImpl;
 
 import com.google.common.base.Strings;
-import com.ngomalalibo.stocktradingapp.entity.Client;
-import com.ngomalalibo.stocktradingapp.entity.ClientAccount;
-import com.ngomalalibo.stocktradingapp.entity.ClientTransaction;
-import com.ngomalalibo.stocktradingapp.entity.User;
+import com.ngomalalibo.stocktradingapp.entity.*;
 import com.ngomalalibo.stocktradingapp.enumeration.ClientTransactionStatus;
 import com.ngomalalibo.stocktradingapp.enumeration.TransactionType;
 import com.ngomalalibo.stocktradingapp.exception.CustomNullPointerException;
 import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 
@@ -20,6 +17,9 @@ public class FundAccountService implements TransactionService
     private GenericDataRepository userDataRepository;
     private GenericDataRepository clientDataRepository;
     private GenericDataRepository clientAccountDataRepository;
+    
+    @Autowired
+    PersistingBaseEntity persistingBaseEntity;
     
     
     public FundAccountService(GenericDataRepository userDataRepository,
@@ -66,7 +66,7 @@ public class FundAccountService implements TransactionService
                 clientAccount.setBalance(newBalance);
                 clientAccount.setPreviousBalance(balance);
                 
-                ClientAccount returnedClientAccount = clientAccount.replaceEntity(clientAccount, clientAccount);// persist client account funding with update
+                ClientAccount returnedClientAccount = persistingBaseEntity.replaceEntity(clientAccount, clientAccount);// persist client account funding with update
                 
                 if (returnedClientAccount != null)
                 {
@@ -78,7 +78,7 @@ public class FundAccountService implements TransactionService
                         fundAccount.setUsername(username); // client making purchase
                         fundAccount.setTransactionStatus(ClientTransactionStatus.COMPLETED);
                         
-                        fundAccount.save(fundAccount);
+                        persistingBaseEntity.save(fundAccount);
                         return fundAccount; // previous balance in database record is current balance is user record before update
                     }
                 }

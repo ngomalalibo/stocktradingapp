@@ -21,6 +21,9 @@ public class BuyService implements TransactionService
     @Autowired
     StockQuoteService stockQuoteService;
     
+    @Autowired
+    PersistingBaseEntity persistingBaseEntity;
+    
     private final GenericDataRepository userDataRepository;
     private final GenericDataRepository clientDataRepository;
     private final GenericDataRepository clientAccountDataRepository;
@@ -128,10 +131,10 @@ public class BuyService implements TransactionService
                     clientAccount.setPreviousBalance(clientAccount.getBalance());
                     clientAccount.setBalance(balance);
                     
-                    clientAccount = clientAccount.replaceEntity(clientAccount, clientAccount);// update balance. replaceEntity takes a records with the same ID and replaces the one in the database one with the other
+                    clientAccount = persistingBaseEntity.replaceEntity(clientAccount, clientAccount);// update balance. replaceEntity takes a records with the same ID and replaces the one in the database one with the other
                     if (clientAccount != null)
                     {
-                        buy.save(buy); // persist new transaction
+                        persistingBaseEntity.save(buy); // persist new transaction
                         return buy;
                     }
                 }

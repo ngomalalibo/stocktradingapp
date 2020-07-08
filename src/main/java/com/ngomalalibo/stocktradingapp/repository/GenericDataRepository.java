@@ -18,7 +18,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityNotFoundException;
@@ -33,9 +32,6 @@ import java.util.stream.Stream;
 @Repository
 public class GenericDataRepository
 {
-    @Autowired
-    GetCollectionFromEntityName getCollectionFromEntityName;
-    
     private MongoCollection collection;
     private String simpleName;
     

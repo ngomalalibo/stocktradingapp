@@ -3,7 +3,6 @@ package com.ngomalalibo.stocktradingapp.factory;
 import com.ngomalalibo.stocktradingapp.entity.ClientTransaction;
 import com.ngomalalibo.stocktradingapp.serviceImpl.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +23,7 @@ public class TransactionFactory
     @Autowired
     private TransactionService fundAccountService;
     
-    private TransactionService service;
+    private TransactionService selectedService;
     
     public TransactionFactory()
     {
@@ -38,21 +37,21 @@ public class TransactionFactory
         {
             if (transactionType.equalsIgnoreCase("buy"))
             {
-                service = buyService;
+                selectedService = buyService;
             }
             else if (transactionType.equalsIgnoreCase("sell"))
             {
-                service = sellService;
+                selectedService = sellService;
             }
             else if (transactionType.equalsIgnoreCase("fundaccount"))
             {
-                service = fundAccountService;
+                selectedService = fundAccountService;
             }
             else
             {
                 return null;
             }
-            return (ClientTransaction) service.service(request);
+            return (ClientTransaction) selectedService.service(request);
         }
         else
         {

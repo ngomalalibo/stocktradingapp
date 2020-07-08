@@ -4,6 +4,7 @@ import com.ngomalalibo.stocktradingapp.apiclient.StockQuoteApiClient;
 import com.ngomalalibo.stocktradingapp.exception.CustomNullPointerException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -13,6 +14,14 @@ import java.util.Map;
 @Service
 public class StockQuoteService implements TransactionService
 {
+    private StockQuoteApiClient stockQuoteApiClient;
+    
+    @Autowired
+    public StockQuoteService(StockQuoteApiClient stockQuoteApiClient)
+    {
+        this.stockQuoteApiClient = stockQuoteApiClient;
+    }
+    
     @Override
     public Object service(Map<String, Object> params)
     {
@@ -21,6 +30,6 @@ public class StockQuoteService implements TransactionService
         {
             throw new CustomNullPointerException("Please provide a company name to get its stock price");
         }
-        return new StockQuoteApiClient().getStock(company);
+        return stockQuoteApiClient.getStock(company);
     }
 }

@@ -6,7 +6,6 @@ import com.ngomalalibo.stocktradingapp.enumeration.TransactionType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.Min;
@@ -25,8 +24,8 @@ public class ClientTransaction extends PersistingBaseEntity
     @Min(value = 1, message = "No of units cannot be less than 1")
     private int noOfUnits;
     
-    @Autowired
     private StockQuote stockQuote;
+    
     private Double transactionAmount;
     
     @NotNull

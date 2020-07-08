@@ -27,20 +27,24 @@ import static org.springframework.http.ResponseEntity.ok;
 public class PortfolioController
 {
     @Autowired
-    @Qualifier("portfolio")
+    @Qualifier("portfolioService")
     TransactionService services;
+    
+    @Qualifier("clientTransactionsService")
+    @Autowired
+    TransactionService clientTransactionsService;
     
     @PostMapping("/portfolio")
     public ResponseEntity<Object> viewStocks(@RequestBody HashMap<String, Object> request)
     {
         try
         {
-            List<ClientTransaction> allClientTransactions = (List<ClientTransaction>) new ClientTransactionsService().service(request);
+            List<ClientTransaction> allClientTransactions = (List<ClientTransaction>) clientTransactionsService.service(request);
             if (allClientTransactions != null && allClientTransactions.size() > 0)
             {
                 request.put("allClientTransactions", allClientTransactions);
                 
-                ClientPortfolio portfolio = (ClientPortfolio) new PortfolioService().service(request);
+                ClientPortfolio portfolio = (ClientPortfolio) services.service(request);
                 return ok(portfolio);
             }
             else

@@ -6,8 +6,9 @@ import com.ngomalalibo.stocktradingapp.entity.PersistingBaseEntity;
 import com.ngomalalibo.stocktradingapp.entity.StockQuote;
 import com.ngomalalibo.stocktradingapp.enumeration.TransactionType;
 import com.ngomalalibo.stocktradingapp.exception.InsufficientCaseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -15,20 +16,27 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-// @Slf4j
+@Slf4j
 @Service
-@Qualifier("portfolio")
-//@RequiredArgsConstructor
 public class PortfolioService implements TransactionService
 {
-    Logger log = LoggerFactory.getLogger(PortfolioService.class);
+    @Qualifier("stockQuoteService")
+    @Autowired
+    TransactionService stockQuoteService;
+    
+    @Autowired
+    PersistingBaseEntity persistingBaseEntity;
+    
+    @Qualifier("clientStocksService")
+    @Autowired
+    TransactionService clientStocksService;
     
     @Override
     public Object service(Map<String, Object> params)
     {
         List<ClientTransaction> allClientTransactions = (List<ClientTransaction>) params.get("allClientTransactions");
         String username = params.get("username").toString();
-    
+        
         ClientPortfolio portfolio = new ClientPortfolio();
         Double totalAmountInvested = 0D;
         AtomicReference<Double> totalValueOfPortfolio = new AtomicReference<>(0D);
@@ -53,7 +61,7 @@ public class PortfolioService implements TransactionService
         {{
             put("username", username);
         }};
-        portfolio.setStocks((Set<String>) new ClientStocksService().service(stocks));
+        portfolio.setStocks((Set<String>) clientStocksService.service(stocks));
         
         //get no of units owned per stock, get current stock price. Multiply both value for each stock to get value of portfolio
         if (portfolio.getStocks() != null)
@@ -61,12 +69,15 @@ public class PortfolioService implements TransactionService
             Map<String, Object> req = new HashMap<String, Object>();
             portfolio.getStocks().forEach(stock ->
                                           {
-                                              Integer noOfUnits = allClientTransactions.stream() // stream all client transactions
+                                              /*Integer noOfUnits = allClientTransactions.stream() // stream all client transactions
+                                                                                       .filter(trans -> stock.equals(trans.getStockQuote().getSecurityName())) // get transactions for current stock
+                                                                                       .map(ClientTransaction::getNoOfUnits).reduce(Integer::sum).orElse(0); // get no of units*/
+                                              Integer noOfUnits = allClientTransactions.stream().filter(Objects::nonNull).filter(trans->trans.getStockQuote()!=null)// stream all client transactions
                                                                                        .filter(trans -> stock.equals(trans.getStockQuote().getSecurityName())) // get transactions for current stock
                                                                                        .map(ClientTransaction::getNoOfUnits).reduce(Integer::sum).orElse(0); // get no of units
                 
                                               req.putIfAbsent("companyname", stock);
-                                              StockQuote stockQuote1 = (StockQuote) new StockQuoteService().service(req);// get current price of stock
+                                              StockQuote stockQuote1 = (StockQuote) stockQuoteService.service(req);// get current price of stock
                                               if (stockQuote1 != null)
                                               {
                                                   Double currentPrice = stockQuote1.getUnitSharePrice();
@@ -93,7 +104,7 @@ public class PortfolioService implements TransactionService
         portfolio.setUsername(username);
         portfolio.setEvaluation("To be evaluated");
         
-        ClientPortfolio savedPortfolio = (ClientPortfolio) portfolio.save(portfolio);// persist portfolio to database
+        ClientPortfolio savedPortfolio = (ClientPortfolio) persistingBaseEntity.save(portfolio);// persist portfolio to database
         
         if (savedPortfolio != null)
         {

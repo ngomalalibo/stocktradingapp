@@ -10,6 +10,7 @@ import com.ngomalalibo.stocktradingapp.entity.StockQuote;
 import com.ngomalalibo.stocktradingapp.exception.CustomNullPointerException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import pl.zankowski.iextrading4j.api.stocks.Quote;
 import pl.zankowski.iextrading4j.client.IEXCloudClient;
 import pl.zankowski.iextrading4j.client.IEXCloudTokenBuilder;
@@ -33,7 +34,7 @@ import java.net.URLConnection;
 
 @Data
 @Slf4j
-//@RequiredArgsConstructor
+@Service
 public class StockQuoteApiClient implements IEXCloudV1RestRequest
 {
     private static Client client;

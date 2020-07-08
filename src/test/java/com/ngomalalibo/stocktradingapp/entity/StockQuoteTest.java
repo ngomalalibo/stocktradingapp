@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class StockQuoteTest
 {
-    @Autowired
     StockQuote stockQuote;
     
     @BeforeEach
     public void setup()
     {
+       stockQuote = new StockQuote();
     }
     
     @Test

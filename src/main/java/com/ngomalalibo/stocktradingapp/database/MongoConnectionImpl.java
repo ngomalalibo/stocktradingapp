@@ -2,7 +2,10 @@ package com.ngomalalibo.stocktradingapp.database;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
-import com.mongodb.client.*;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoIterable;
 import com.ngomalalibo.stocktradingapp.codec.IDPrefixCodec;
 import com.ngomalalibo.stocktradingapp.entity.*;
 import com.ngomalalibo.stocktradingapp.enumeration.IDPrefixes;
@@ -25,39 +28,14 @@ import java.util.Map;
 @Slf4j
 @Getter
 @Component
-public class MongoConnectionImpl implements CollectionEntityMapping
+public class MongoConnectionImpl extends DatabaseConnection implements CollectionEntityMapping
 {
-    
-    protected final String DBNAME = "stocks";
-    protected static final String DB_ORGANIZATION = "Stock Trading Inc.";
-    protected static final String DB_ACTIVITYLOG = "activitylogs";
-    protected static final String DB_CLIENT = "clients";
-    protected static final String DB_CLIENT_ACCOUNT = "account";
-    protected static final String DB_CLIENT_PORTFOLIO = "portfolios";
-    protected static final String DB_CLIENT_TRANSACTION = "transactions";
-    protected static final String DB_NOTE = "notes";
-    protected static final String DB_STOCK = "stocks";
-    protected static final String DB_USER = "users";
-    
-    // @Value("${spring.data.mongodb.uri}")
-    protected String DBSTR = System.getenv().get("MONGODB_DATABASE_STOCKS_ATLAS");
-    
-    protected static MongoClient mongo = null;
-    protected static MongoDatabase db;
-    
-    public static MongoCollection<ActivityLog> activityLog;
-    public static MongoCollection<Client> client;
-    public static MongoCollection<ClientAccount> clientAccount;
-    public static MongoCollection<ClientPortfolio> portfolio;
-    public static MongoCollection<ClientTransaction> transaction;
-    public static MongoCollection<StockQuote> stockQuote;
-    public static MongoCollection<User> user;
-    
     public <T extends PersistingBaseEntity> MongoCollection getPersistingCollectionFromClass(T t)
     {
         if (!CustomNullChecker.nullObjectChecker(t))
         {
             String simpleName = t.getClass().getSimpleName();
+            
             //System.out.println("IDPrefixes.valueOf(simpleName): " + IDPrefixes.valueOf(simpleName));
             
             Map<IDPrefixes, MongoCollection<?>> map = mapCollectionsAndIDPrefixes();
@@ -69,7 +47,6 @@ public class MongoConnectionImpl implements CollectionEntityMapping
         {
             throw new NullPointerException("no collection with provided entity");
         }
-        
     }
     
     public static CodecRegistry getCodecRegistry()
@@ -169,7 +146,6 @@ public class MongoConnectionImpl implements CollectionEntityMapping
             put("ClientTransaction", ClientTransaction.class);
             put("StockQuote", StockQuote.class);
             put("User", User.class);
-            
         }};
     }
     
@@ -224,7 +200,7 @@ public class MongoConnectionImpl implements CollectionEntityMapping
     }*/
     public MongoDatabase getDBConnection()
     {
-        DBSTR = System.getenv().get("MONGODB_DATABASE_STOCKS_ATLAS");
+        // DBSTR = System.getenv().get("MONGODB_DATABASE_STOCKS_ATLAS");
         if (db == null || mongo == null)
         {
             mongo = MongoClients.create(DBSTR);

@@ -69,20 +69,20 @@ public class PersistingBaseEntity implements Serializable, Persistable, Cloneabl
     
     @BsonIgnore
     @JsonIgnore
+    
     @Autowired
     private MongoConnectionImpl database;
-    ;
     
     public PersistingBaseEntity()
     {
         prePersist(this);
-        // database = new MongoConnectionImpl();
+        database = new MongoConnectionImpl();
     }
     
     /*@PostConstruct
     public void init()
     {
-    
+        prePersist(this);
     }*/
     
     @Override

@@ -22,6 +22,9 @@ public class SellService implements TransactionService
     @Autowired
     ClientTransactionsService clientTransactionsService;
     
+    @Autowired
+    PersistingBaseEntity persistingBaseEntity;
+    
     private static GenericDataRepository userDataRepository;
     private static GenericDataRepository clientDataRepository;
     private static GenericDataRepository clientAccountDataRepository;
@@ -137,13 +140,13 @@ public class SellService implements TransactionService
                     ca.setBalance(balance);
                     
                     // update account balance
-                    ClientAccount returnedClientAccount = ca.replaceEntity(ca, ca);
+                    ClientAccount returnedClientAccount = persistingBaseEntity.replaceEntity(ca, ca);
                     
                     // Client returned = (Client) client.save(client); // client collection is not impacted by sell transaction. only transaction and account collections
                     if (returnedClientAccount != null)
                     {
                         // create new transaction
-                        sell.save(sell);
+                        persistingBaseEntity.save(sell);
                         return sell;
                     }
                 }

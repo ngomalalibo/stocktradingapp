@@ -33,7 +33,7 @@ class StockPriceControllerTest
     void getStockPrice() throws Exception
     {
         mockMvc.perform(MockMvcRequestBuilders.get("/stockprice/{companyname}", "nflx")
-                                              .contentType(MediaType.APPLICATION_JSON)
+                                              .contentType("application/json")
                                               .param("token", RegistrationService.token))
                .andExpect(MockMvcResultMatchers.status().isOk());
     }

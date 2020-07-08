@@ -2,6 +2,7 @@ package com.ngomalalibo.stocktradingapp.serviceImpl;
 
 import com.google.common.base.Strings;
 import com.ngomalalibo.stocktradingapp.entity.Client;
+import com.ngomalalibo.stocktradingapp.entity.PersistingBaseEntity;
 import com.ngomalalibo.stocktradingapp.entity.User;
 import com.ngomalalibo.stocktradingapp.exception.CustomNullPointerException;
 import com.ngomalalibo.stocktradingapp.repository.GenericDataRepository;
@@ -29,6 +30,9 @@ public class RegistrationService implements TransactionService
     @Autowired
     JwtTokenProvider jwtTokenProvider;
     
+    @Autowired
+    PersistingBaseEntity persistingBaseEntity;
+    
     //register new client users
     @Override
     public Object service(Map<String, Object> params) throws NonUniqueResultException, CustomNullPointerException
@@ -45,18 +49,20 @@ public class RegistrationService implements TransactionService
         {
             throw new CustomNullPointerException("Please provide a valid username or password");
         }
-        else if (exists(username))
+        else if ((token = exists(username)) != null)
         {
-            throw new NonUniqueResultException("This user exists in the system. Kindly reset your password of choose another username");
+            log.info("This user exists in the system. Kindly reset your password of choose another username");
+            return token;
+            //throw new NonUniqueResultException("This user exists in the system. Kindly reset your password of choose another username");
         }
         User user = new User(username, PasswordEncoder.getPasswordEncoder().encode(password), "USER", username);
-        token = new JwtTokenProvider().createToken(user);
+        token = jwtTokenProvider.createToken(user);
         user.setToken(token);
         client.setEmail(username);
         
         //  confirm registration was successful by retrieving for user and client from database
-        client = (Client) client.save(client);
-        user = (User) user.save(user);
+        client = (Client) persistingBaseEntity.save(client);
+        user = (User) persistingBaseEntity.save(user);
         
         if (user != null && client != null && user.getUsername().equalsIgnoreCase(client.getEmail()))
         {
@@ -65,16 +71,16 @@ public class RegistrationService implements TransactionService
         return null;
     }
     
-    public boolean exists(String username)
+    public String exists(String username)
     {
         User user = (User) userDataRepository.getRecordByEntityProperty("username", username);
         if (user == null)
         {
-            return false; // user does not exist
+            return null; // user does not exist
         }
         else
         {
-            return true; // user already exists
+            return user.getToken(); // user already exists
         }
     }
 }

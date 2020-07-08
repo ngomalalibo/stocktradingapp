@@ -17,8 +17,6 @@ public class UsersDP implements UserDetailsService
     @Autowired
     private final GenericDataRepository userDataRepository;
     
-    // private BCryptPasswordEncoder bcryptPassEncoder = PasswordEncoder.getPasswordEncoder();
-    
     public UsersDP(GenericDataRepository userDataRepository)
     {
         this.userDataRepository = userDataRepository;
