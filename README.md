@@ -1,11 +1,17 @@
 #stocktradingapp
 
 URLs (accept json): 
+
 https://stockportfoliomgr.herokuapp.com/test
+
 https://stockportfoliomgr.herokuapp.com/registration (params: user & pass)
+
 https://stockportfoliomgr.herokuapp.com/transaction (params:  companyname, deposit, transactiontype, username, units, user )
+
 https://stockportfoliomgr.herokuapp.com/portfolio (param: username)
+
 https://stockportfoliomgr.herokuapp.com/stockprice/{companyname} eg. nflx for Netflix
+
 https://stockportfoliomgr.herokuapp.com/me
 
 The REST API is implemented using the Java Spring framework. The database is a NoSQL MongoDB database hosted remotely on Atlas.
